@@ -1,3 +1,6 @@
 [submodule "qcnn"]
 	path = qcnn
 	url = git@github.com:stroblme/hqsp-qcnn.git
+[submodule "stqft"]
+	path = stqft
+	url = git@github.com:stroblme/hqsp-stqft.git
