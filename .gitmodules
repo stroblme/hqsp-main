@@ -1,0 +1,3 @@
+[submodule "qcnn"]
+	path = qcnn
+	url = git@github.com:stroblme/hqsp-qcnn.git
