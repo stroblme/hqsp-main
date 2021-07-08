@@ -5,10 +5,24 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Main: Generate Features",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceRoot}/generateFeatures.py",
+            "console": "integratedTerminal"
+        },
+        {
             "name": "Main: Train",
             "type": "python",
             "request": "launch",
-            "program": "${file}",
+            "program": "${workspaceRoot}/train.py",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Main: Neural Saliency",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceRoot}/neuralSaliency.py",
             "console": "integratedTerminal"
         }
     ]
