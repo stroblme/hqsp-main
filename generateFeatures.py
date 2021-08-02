@@ -2,7 +2,10 @@ import sys
 sys.path.append("./stqft")
 sys.path.append("./qcnn")
 
+import os
 import glob
+
+os.environ["LD_LIBRARY_PATH"] = "$LD_LIBRARY_PATH:/usr/local/cuda/lib64/:/usr/lib64:/usr/local/cuda/extras/CUPTI/lib64:/usr/local/cuda-11.2/lib64:/usr/local/cuda/targets/x86_64-linux/lib/"
 
 from stqft.frontend import frontend, signal, transform
 from stqft.stqft import stqft_framework
@@ -22,10 +25,19 @@ overlapFactor=0.5
 windowType='hann'
 
 datasetPath = "/ceph/mstrobl/dataset"
+labels = [
+    'left', 'go', 'yes', 'down', 'up', 'on', 'right', 'no', 'off', 'stop',
+]
 
 datasetFiles = glob.glob(datasetPath + "/**/*.wav", recursive=True)
 
 print(f"Found {len(datasetFiles)} files in the dataset")
 
-for dataFile in datasetFiles:
-    genFeature(dataFile)
+for label in labels:
+    glob.glob(datasetPath + "/**/*.wav", recursive=True)
+
+    all_wave = list()
+    all_label = list()
+
+    wave = genFeature(dataFile)
+
