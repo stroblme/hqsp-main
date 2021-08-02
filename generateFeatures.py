@@ -21,11 +21,11 @@ overlapFactor=0.5
 windowType='hann'
 
 datasetPath = "/ceph/mstrobl/dataset"
-outputPath = "/ceph/mstrobl/features"
+outputPath = "/ceph/mstrobl/features/"
 
 def gen_mel(speechFile, sr=16000):
     y = signal(samplingRate=sr, signalType='file', path=speechFile)
-    stqft = transform(stqft_framework, suppressPrint=True, minRotation=0.2)
+    stqft = transform(stqft_framework, suppressPrint=True, minRotation=0.2, numOfShots=1024)
     y_hat_stqft, f, t = stqft.forward(y, nSamplesWindow=windowLength, overlapFactor=overlapFactor, windowType=windowType, suppressPrint=True)
     y_hat_stqft_p, f_p, t_p = stqft.postProcess(y_hat_stqft, f ,t, scale='mel', fmax=4000)
 
@@ -41,8 +41,10 @@ def gen_train(labels, train_audio_path, outputPath, sr=16000, port=1):
         portDatsetLabelFiles = datasetLabelFiles[0::port]
         print(f"Using {len(portDatsetLabelFiles)} out of {len(datasetLabelFiles)} files for label '{label}'")
 
+        it = 0
         for datasetLabelFile in portDatsetLabelFiles:
-            print(f"Processing '{datasetLabelFile}'' in label '{label}'")
+            print(f"Processing '{datasetLabelFile}' in label '{label}' [{it}/{len(portDatsetLabelFiles)}]")
+            it+=1
 
             wave = gen_mel(datasetLabelFile, sr)
 
