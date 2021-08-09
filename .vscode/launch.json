@@ -19,6 +19,13 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "Main: Test",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceRoot}/test.py",
+            "console": "integratedTerminal"
+        },
+        {
             "name": "Main: Neural Saliency",
             "type": "python",
             "request": "launch",
