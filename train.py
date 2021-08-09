@@ -23,15 +23,16 @@ from qcnn.main_qsr import gen_train_from_wave, labels
 from qcnn.models import attrnn_Model
 
 datasetPath = "/ceph/mstrobl/dataset"
-outputPath = "/ceph/mstrobl/features/"
+featurePath = "/ceph/mstrobl/features/"
+checkpoints = "/ceph/mstrobl/checkpoints/"
 
 batchSize = 16
-epochs = 30
+epochs = 60
 
-x_train = np.load(outputPath + "x_train_speech.npy")
-x_valid = np.load(outputPath + "x_test_speech.npy")
-y_train = np.load(outputPath + "y_train_speech.npy")
-y_valid = np.load(outputPath + "y_test_speech.npy")
+x_train = np.load(featurePath + "x_train_speech.npy")
+x_valid = np.load(featurePath + "x_test_speech.npy")
+y_train = np.load(featurePath + "y_train_speech.npy")
+y_valid = np.load(featurePath + "y_test_speech.npy")
 
 
 q_train = x_train
@@ -50,7 +51,7 @@ checkpoint = ModelCheckpoint('checkpoints/best_speech.hdf5', monitor=metric,
 model = attrnn_Model(q_train[0], labels)
 
 model.summary()
-plot_model(model, to_file='model.png')
+# plot_model(model, to_file='model.png')
 
 history = model.fit(
     x=q_train, 
@@ -62,5 +63,5 @@ history = model.fit(
 )
 
 data_ix = time.strftime("%Y%m%d_%H%M")
-
-model.save('checkpoints/'+ data_ix + '_speech.hdf5')
+#TODO: swtich to new model format
+model.save(f"{checkpoints}/data_ix_speech.hdf5")
