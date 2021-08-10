@@ -39,6 +39,13 @@
             "request": "launch",
             "program": "${workspaceRoot}/extractTestData.py",
             "console": "integratedTerminal"
+        },
+        {
+            "name": "Main: Eval",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceRoot}/eval.py",
+            "console": "integratedTerminal"
         }
     ]
 }
