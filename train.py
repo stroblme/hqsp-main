@@ -23,16 +23,17 @@ from qcnn.main_qsr import gen_train_from_wave, labels
 from qcnn.models import attrnn_Model
 
 datasetPath = "/ceph/mstrobl/dataset"
-featurePath = "/ceph/mstrobl/features/"
-checkpoints = "/ceph/mstrobl/checkpoints/"
+featurePath = "/ceph/mstrobl/features"
+checkpointsPath = "/ceph/mstrobl/checkpoints"
+modelsPath = "/ceph/mstrobl/models"
 
 batchSize = 16
 epochs = 60
 
-x_train = np.load(featurePath + "x_train_speech.npy")
-x_valid = np.load(featurePath + "x_test_speech.npy")
-y_train = np.load(featurePath + "y_train_speech.npy")
-y_valid = np.load(featurePath + "y_test_speech.npy")
+x_train = np.load(f"{featurePath}/x_train_speech.npy")
+x_valid = np.load(f"{featurePath}/x_test_speech.npy")
+y_train = np.load(f"{featurePath}/y_train_speech.npy")
+y_valid = np.load(f"{featurePath}/y_test_speech.npy")
 
 
 q_train = x_train
@@ -44,7 +45,7 @@ early_stop = EarlyStopping(monitor='val_loss', mode='min',
 
 metric = 'val_accuracy'
 
-checkpoint = ModelCheckpoint('checkpoints/best_speech.hdf5', monitor=metric, 
+checkpoint = ModelCheckpoint(f'{checkpointsPath}/checkpoint', monitor=metric, 
                             verbose=1, save_best_only=True, mode='max')
 
 
@@ -63,5 +64,4 @@ history = model.fit(
 )
 
 data_ix = time.strftime("%Y%m%d_%H%M")
-#TODO: swtich to new model format
-model.save(f"{checkpoints}/data_ix_speech.hdf5")
+model.save(f"{modelsPath}/model_{time.time()}")
