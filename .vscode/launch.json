@@ -26,10 +26,18 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "Main: Neural Saliency",
+            "name": "Main: Original Train",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceRoot}/neuralSaliency.py",
+            "program": "${workspaceRoot}/qcnn/main_qsr.py",
+            "args": ["--mel=1", "--quanv=1"],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Main: Extract Test Dataset",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceRoot}/extractTestData.py",
             "console": "integratedTerminal"
         }
     ]
