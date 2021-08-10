@@ -51,7 +51,7 @@ def gen_train(labels, train_audio_path, outputPath, sr=16000, port=1):
         portDatsetLabelFiles = datasetLabelFiles[0::port]
         print(f"Using {len(portDatsetLabelFiles)} out of {len(datasetLabelFiles)} files for label '{label}'")
 
-        it = 0
+        it = 1
         for datasetLabelFile in portDatsetLabelFiles:
             print(f"Processing '{datasetLabelFile}' in label '{label}' [{it}/{len(portDatsetLabelFiles)}]")
             it+=1
@@ -76,4 +76,4 @@ datasetFiles = glob.glob(datasetPath + "/**/*.wav", recursive=True)
 
 print(f"Found {len(datasetFiles)} files in the dataset")
 
-gen_train(labels, datasetPath, featurePath, port=2)
+gen_train(labels, datasetPath, featurePath)
