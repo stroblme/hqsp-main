@@ -30,7 +30,7 @@
             "type": "python",
             "request": "launch",
             "program": "${workspaceRoot}/qcnn/main_qsr.py",
-            "args": ["--mel=1", "--quanv=1"],
+            "args": ["--mel=0", "--quanv=0"],
             "console": "integratedTerminal"
         },
         {
