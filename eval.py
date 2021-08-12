@@ -12,19 +12,20 @@ speechFile = '../dataset/left/cb8f8307_nohash_7.wav'
 
 y_rosa, _ = librosa.load(speechFile, sr = sr)
 y_rosa_hat = librosa.feature.melspectrogram(y_rosa, sr=sr, n_fft=1024, hop_length=128, power=1.0, n_mels=60, fmin=40.0, fmax=sr/2)
-y_rosa_hat = librosa.feature.melspectrogram(y_rosa, sr=sr, n_fft=1024, hop_length=128, power=1.0)
+# y_rosa_hat = librosa.feature.melspectrogram(y_rosa, sr=sr, n_fft=1024, hop_length=128, power=1.0)
 
 y = signal(samplingRate=sr, signalType='file', path=speechFile)
-stqft = transform(stqft_framework, minRotation=0.2, numOfShots=1024, suppressPrint=True)
+
+stqft = transform(stqft_framework, minRotation=0.2, numOfShots=2048, suppressPrint=True, fixZeroSignal=True)
 y_hat_stqft, f, t = stqft.forward(y, nSamplesWindow=1024, overlapFactor=0.875, windowType='hann')
 y_hat_stqft_p, f_p, t_p = stqft.postProcess(y_hat_stqft, f ,t, scale='None', fmax=8000, normalize=False)
 
-librosa.filters.mel(22050, 2048, fmax=8000)
+mel_basis = librosa.filters.mel(sr, f.size, n_mels=60, fmin=40.0, fmax=sr/2)
 
-for y_t in y_hat_stqft_p:
-    pass
+y_hat_stqft_p_mel = np.dot(mel_basis[:,1:], y_hat_stqft_p)
 
-test_plot(y_rosa_hat, sr)
-test_plot(y_hat_stqft_p, sr)
+
+# test_plot(y_rosa_hat, sr)
+test_plot(y_hat_stqft_p_mel, sr)
 
 input()

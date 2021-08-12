@@ -45,7 +45,8 @@
             "type": "python",
             "request": "launch",
             "program": "${workspaceRoot}/eval.py",
-            "console": "integratedTerminal"
+            "console": "integratedTerminal",
+            "justMyCode": false
         }
     ]
 }
