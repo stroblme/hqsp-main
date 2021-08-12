@@ -35,7 +35,7 @@ def gen_mel(speechFile, sr=16000):
     y = signal(samplingRate=sr, signalType='file', path=speechFile)
     stqft = transform(stqft_framework, suppressPrint=True, minRotation=0.2, numOfShots=1024)
     y_hat_stqft, f, t = stqft.forward(y, nSamplesWindow=windowLength, overlapFactor=overlapFactor, windowType=windowType, suppressPrint=True)
-    y_hat_stqft_p, f_p, t_p = stqft.postProcess(y_hat_stqft, f ,t, scale='mel', fmax=4000)
+    y_hat_stqft_p, f_p, t_p = stqft.postProcess(y_hat_stqft, f ,t, scale='mel', normalize=False, samplingRate=y.samplingRate, nMels=60, fmin=40.0, fmax=y.samplingRate/2)
 
     diff = time.time()-start
     print(f"Iteration took {diff} s")
@@ -76,4 +76,4 @@ datasetFiles = glob.glob(datasetPath + "/**/*.wav", recursive=True)
 
 print(f"Found {len(datasetFiles)} files in the dataset")
 
-gen_train(labels, datasetPath, featurePath)
+gen_train(labels, datasetPath, featurePath, port=10)
