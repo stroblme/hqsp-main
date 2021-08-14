@@ -29,9 +29,13 @@ datasetPath = "/ceph/mstrobl/dataset"
 waveformPath = "/ceph/mstrobl/waveforms"
 featurePath = "/ceph/mstrobl/features/"
 
-av = 0
+PoolSize = 5
 
-def gen_mel(speechFile, sr=16000):
+av = 0
+sr=16000
+
+def gen_mel(speechFile):
+    print(f"Processing {speechFile}")
     start = time.time()
 
     y = signal(samplingRate=sr, signalType='file', path=speechFile)
@@ -43,32 +47,30 @@ def gen_mel(speechFile, sr=16000):
     print(f"Iteration took {diff} s")
     return y_hat_stqft_p
 
-def gen_train(labels, train_audio_path, outputPath, sr=16000, port=1):
+def poolProcess(datasetLabelFile):
+    wave = gen_mel(datasetLabelFile)
+    return np.expand_dims(wave[:,1:], axis=2)
+
+def gen_train(labels, train_audio_path, outputPath, samplingRate=16000, port=1):
     for label in labels:
         datasetLabelFiles = glob.glob(f"{train_audio_path}/{label}/*.wav")
 
         all_wave = list()
-        all_label = list()
 
         portDatsetLabelFiles = datasetLabelFiles[0::port]
         print(f"Using {len(portDatsetLabelFiles)} out of {len(datasetLabelFiles)} files for label '{label}'")
 
-        it = 1
-        for datasetLabelFile in portDatsetLabelFiles:
-            print(f"Processing '{datasetLabelFile}' in label '{label}' [{it}/{len(portDatsetLabelFiles)}]")
-            it+=1
+        sr = samplingRate
 
-            wave = gen_mel(datasetLabelFile, sr)
-
-            all_wave.append(np.expand_dims(wave[:,1:], axis=2))
-            all_label.append(label)
+        with Pool(PoolSize) as p:
+            all_wave = p.map(poolProcess, datasetLabelFiles)
 
     print(f"Finished generating waveforms at {time.time()}")
     
     with open(f"{waveformPath}/waveforms{time.time()}.pckl", 'wb') as fid:
         pickle.dump(all_wave, fid, pickle.HIGHEST_PROTOCOL)
     with open(f"{waveformPath}/labels{time.time()}.pckl", 'wb') as fid:
-        pickle.dump(all_label, fid, pickle.HIGHEST_PROTOCOL)
+        pickle.dump(labels, fid, pickle.HIGHEST_PROTOCOL)
         
     print(f"Finished dumping cache. Starting Feature export")
 
