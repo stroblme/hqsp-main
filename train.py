@@ -19,7 +19,7 @@ from stqft.frontend import frontend, signal, transform
 from stqft.stqft import stqft_framework
 from stqft.stft import stft_framework
 
-from qcnn.main_qsr import gen_train_from_wave, labels
+from qcnn.main_qsr import gen_train_from_wave, labels, gen_quanv
 from qcnn.models import attrnn_Model
 
 datasetPath = "/ceph/mstrobl/dataset"
@@ -36,6 +36,7 @@ y_train = np.load(f"{featurePath}/y_train_speech.npy")
 y_valid = np.load(f"{featurePath}/y_test_speech.npy")
 
 
+q_train, q_valid = gen_quanv(x_train, x_valid, 2) 
 q_train = x_train
 q_valid = x_valid
 
