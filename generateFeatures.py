@@ -20,7 +20,7 @@ from qcnn.main_qsr import gen_train_from_wave, labels
 
 
 windowLength = 2**10
-overlapFactor=0.5
+overlapFactor=0.875
 windowType='hann'
 
 datasetPath = "/ceph/mstrobl/dataset"
@@ -58,7 +58,7 @@ def gen_train(labels, train_audio_path, outputPath, sr=16000, port=1):
 
             wave = gen_mel(datasetLabelFile, sr)
 
-            all_wave.append(np.expand_dims(wave, axis=2))
+            all_wave.append(np.expand_dims(wave[:,1:], axis=2))
             all_label.append(label)
 
     print(f"Finished generating waveforms at {time.time()}")
