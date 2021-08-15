@@ -26,9 +26,10 @@ datasetPath = "/ceph/mstrobl/dataset"
 featurePath = "/ceph/mstrobl/features"
 checkpointsPath = "/ceph/mstrobl/checkpoints"
 modelsPath = "/ceph/mstrobl/models"
+quantumPath = "/ceph/mstrobl/data_quantum"
 
 batchSize = 16
-epochs = 60
+epochs = 30
 
 x_train = np.load(f"{featurePath}/x_train_speech.npy")
 x_valid = np.load(f"{featurePath}/x_test_speech.npy")
@@ -36,9 +37,8 @@ y_train = np.load(f"{featurePath}/y_train_speech.npy")
 y_valid = np.load(f"{featurePath}/y_test_speech.npy")
 
 
-q_train, q_valid = gen_quanv(x_train, x_valid, 2) 
-q_train = x_train
-q_valid = x_valid
+q_train = np.load(f"{quantumPath}/demo_t1.npy")
+q_valid = np.load(f"{quantumPath}/demo_t2.npy")
 
 ## For Quanv Exp.
 early_stop = EarlyStopping(monitor='val_loss', mode='min', 
