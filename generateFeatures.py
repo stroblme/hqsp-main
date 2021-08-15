@@ -14,9 +14,8 @@ import pickle
 
 from stqft.frontend import frontend, signal, transform
 from stqft.stqft import stqft_framework
-from stqft.stft import stft_framework
 
-from qcnn.main_qsr import gen_train_from_wave, labels
+from qcnn.small_qsr import gen_train_from_wave, labels
 
 
 windowLength = 2**10
@@ -44,7 +43,7 @@ def gen_mel(speechFile, sr=16000):
 def gen_train(labels, train_audio_path, outputPath, sr=16000, port=1):
     all_wave = list()
     all_label = list()
-    
+
     for label in labels:
         datasetLabelFiles = glob.glob(f"{train_audio_path}/{label}/*.wav")
 
@@ -73,8 +72,10 @@ def gen_train(labels, train_audio_path, outputPath, sr=16000, port=1):
 
     return gen_train_from_wave(all_wave=all_wave, all_label=all_label, output=outputPath)
 
-datasetFiles = glob.glob(datasetPath + "/**/*.wav", recursive=True)
+if __name__ == '__main__':
 
-print(f"Found {len(datasetFiles)} files in the dataset")
+    datasetFiles = glob.glob(datasetPath + "/**/*.wav", recursive=True)
 
-gen_train(labels, datasetPath, featurePath, port=10)
+    print(f"Found {len(datasetFiles)} files in the dataset")
+
+    gen_train(labels, datasetPath, featurePath, port=10)

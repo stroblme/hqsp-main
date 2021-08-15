@@ -12,13 +12,14 @@ import numpy as np
 import time
 import pickle
 
+import multiprocessing
 from multiprocessing import Pool
 
-from stqft.frontend import frontend, signal, transform
-from stqft.stqft import stqft_framework
-from stqft.stft import stft_framework
 
-from qcnn.main_qsr import gen_train_from_wave, labels
+from stqft.frontend import signal, transform
+from stqft.stqft import stqft_framework
+
+from qcnn.small_qsr import gen_train_from_wave, labels
 
 
 windowLength = 2**10
@@ -59,16 +60,17 @@ def gen_train(labels, train_audio_path, outputPath, samplingRate=16000, port=1):
     for label in labels:
         datasetLabelFiles = glob.glob(f"{train_audio_path}/{label}/*.wav")
 
-
         portDatsetLabelFiles = datasetLabelFiles[0::port]
         print(f"Using {len(portDatsetLabelFiles)} out of {len(datasetLabelFiles)} files for label '{label}'")
 
-
+    
         with Pool(PoolSize) as p:
-            all_wave = p.map(poolProcess, portDatsetLabelFiles)
+            temp_waves = p.map(poolProcess, portDatsetLabelFiles)
+
+        all_wave.append(temp_waves)
 
     print(f"Finished generating waveforms at {time.time()}")
-    
+    input()
     with open(f"{waveformPath}/waveforms{time.time()}.pckl", 'wb') as fid:
         pickle.dump(all_wave, fid, pickle.HIGHEST_PROTOCOL)
     with open(f"{waveformPath}/labels{time.time()}.pckl", 'wb') as fid:
@@ -78,8 +80,11 @@ def gen_train(labels, train_audio_path, outputPath, samplingRate=16000, port=1):
 
     return gen_train_from_wave(all_wave=all_wave, all_label=labels, output=outputPath)
 
-datasetFiles = glob.glob(datasetPath + "/**/*.wav", recursive=True)
+if __name__ == '__main__':
+    multiprocessing.set_start_method('spawn')
 
-print(f"Found {len(datasetFiles)} files in the dataset")
+    datasetFiles = glob.glob(datasetPath + "/**/*.wav", recursive=True)
 
-gen_train(labels, datasetPath, featurePath, port=10)
+    print(f"Found {len(datasetFiles)} files in the dataset")
+
+    gen_train(labels, datasetPath, featurePath, port=10)
