@@ -55,8 +55,11 @@ def gen_train(labels, train_audio_path, outputPath, samplingRate=16000, port=1):
     global sr
     sr = samplingRate
     all_wave = list()
-
+    all_labels = list()
+    
     for label in labels:
+        temp_waves = list()
+        
         datasetLabelFiles = glob.glob(f"{train_audio_path}/{label}/*.wav")
 
         portDatsetLabelFiles = datasetLabelFiles[0::port]
@@ -66,17 +69,19 @@ def gen_train(labels, train_audio_path, outputPath, samplingRate=16000, port=1):
         with Pool(PoolSize) as p:
             temp_waves = p.map(poolProcess, portDatsetLabelFiles)
 
-        all_wave.append(temp_waves)
+        all_wave = all_wave + temp_waves.copy() #copy to break the reference here
+        all_labels = all_labels + [label]*len(portDatsetLabelFiles) #append the label n times
 
-    print(f"Finished generating waveforms at {time.time()}")
-    with open(f"{waveformPath}/waveforms{time.time()}.pckl", 'wb') as fid:
+    tid = time.time()
+    print(f"Finished generating waveforms at {tid}")
+    with open(f"{waveformPath}/waveforms{tid}.pckl", 'wb') as fid:
         pickle.dump(all_wave, fid, pickle.HIGHEST_PROTOCOL)
-    with open(f"{waveformPath}/labels{time.time()}.pckl", 'wb') as fid:
-        pickle.dump(labels, fid, pickle.HIGHEST_PROTOCOL)
+    with open(f"{waveformPath}/labels{tid}.pckl", 'wb') as fid:
+        pickle.dump(all_labels, fid, pickle.HIGHEST_PROTOCOL)
         
     print(f"Finished dumping cache. Starting Feature export")
 
-    return gen_train_from_wave(all_wave=all_wave, all_label=labels, output=outputPath)
+    return gen_train_from_wave(all_wave=all_wave, all_label=all_labels, output=outputPath)
 
 if __name__ == '__main__':
     print(f"\n\n\n-----------------------\n\n\n")
