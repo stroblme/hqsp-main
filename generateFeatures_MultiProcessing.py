@@ -52,18 +52,20 @@ def poolProcess(datasetLabelFile):
     return np.expand_dims(wave[:,1:], axis=2)
 
 def gen_train(labels, train_audio_path, outputPath, samplingRate=16000, port=1):
+    global sr
+    sr = samplingRate
+    all_wave = list()
+
     for label in labels:
         datasetLabelFiles = glob.glob(f"{train_audio_path}/{label}/*.wav")
 
-        all_wave = list()
 
         portDatsetLabelFiles = datasetLabelFiles[0::port]
         print(f"Using {len(portDatsetLabelFiles)} out of {len(datasetLabelFiles)} files for label '{label}'")
 
-        sr = samplingRate
 
         with Pool(PoolSize) as p:
-            all_wave = p.map(poolProcess, datasetLabelFiles)
+            all_wave = p.map(poolProcess, portDatsetLabelFiles)
 
     print(f"Finished generating waveforms at {time.time()}")
     
@@ -74,7 +76,7 @@ def gen_train(labels, train_audio_path, outputPath, samplingRate=16000, port=1):
         
     print(f"Finished dumping cache. Starting Feature export")
 
-    return gen_train_from_wave(all_wave=all_wave, all_label=all_label, output=outputPath)
+    return gen_train_from_wave(all_wave=all_wave, all_label=labels, output=outputPath)
 
 datasetFiles = glob.glob(datasetPath + "/**/*.wav", recursive=True)
 
