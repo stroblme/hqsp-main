@@ -19,6 +19,13 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "Main: Generate Features From Wave",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceRoot}/generateFeaturesFromWave.py",
+            "console": "integratedTerminal"
+        },
+        {
             "name": "Main: Train",
             "type": "python",
             "request": "launch",
