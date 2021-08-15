@@ -30,8 +30,7 @@ datasetPath = "/ceph/mstrobl/dataset"
 waveformPath = "/ceph/mstrobl/waveforms"
 featurePath = "/ceph/mstrobl/features/"
 
-PoolSize = 5
-
+PoolSize = int(multiprocessing.cpu_count()*0.6) #be gentle..
 av = 0
 sr=16000
 
@@ -61,7 +60,7 @@ def gen_train(labels, train_audio_path, outputPath, samplingRate=16000, port=1):
         datasetLabelFiles = glob.glob(f"{train_audio_path}/{label}/*.wav")
 
         portDatsetLabelFiles = datasetLabelFiles[0::port]
-        print(f"Using {len(portDatsetLabelFiles)} out of {len(datasetLabelFiles)} files for label '{label}'")
+        print(f"\nUsing {len(portDatsetLabelFiles)} out of {len(datasetLabelFiles)} files for label '{label}'\n")
 
     
         with Pool(PoolSize) as p:
@@ -70,7 +69,6 @@ def gen_train(labels, train_audio_path, outputPath, samplingRate=16000, port=1):
         all_wave.append(temp_waves)
 
     print(f"Finished generating waveforms at {time.time()}")
-    input()
     with open(f"{waveformPath}/waveforms{time.time()}.pckl", 'wb') as fid:
         pickle.dump(all_wave, fid, pickle.HIGHEST_PROTOCOL)
     with open(f"{waveformPath}/labels{time.time()}.pckl", 'wb') as fid:
@@ -81,7 +79,12 @@ def gen_train(labels, train_audio_path, outputPath, samplingRate=16000, port=1):
     return gen_train_from_wave(all_wave=all_wave, all_label=labels, output=outputPath)
 
 if __name__ == '__main__':
+    print(f"\n\n\n-----------------------\n\n\n")
+    print(f"Generate Feature Multiprocessing @{time.time()}")
+    print(f"\n\n\n-----------------------\n\n\n")
+
     multiprocessing.set_start_method('spawn')
+    print(f"Running {PoolSize} processes")
 
     datasetFiles = glob.glob(datasetPath + "/**/*.wav", recursive=True)
 
