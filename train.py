@@ -25,37 +25,39 @@ quantumPath = "/ceph/mstrobl/data_quantum"
 batchSize = 16
 epochs = 30
 
-x_train = np.load(f"{featurePath}/x_train_speech.npy")
-x_valid = np.load(f"{featurePath}/x_test_speech.npy")
-y_train = np.load(f"{featurePath}/y_train_speech.npy")
-y_valid = np.load(f"{featurePath}/y_test_speech.npy")
+if __name__ == '__main__':
+
+    x_train = np.load(f"{featurePath}/x_train_speech.npy")
+    x_valid = np.load(f"{featurePath}/x_test_speech.npy")
+    y_train = np.load(f"{featurePath}/y_train_speech.npy")
+    y_valid = np.load(f"{featurePath}/y_test_speech.npy")
 
 
-q_train = np.load(f"{quantumPath}/demo_t1.npy")
-q_valid = np.load(f"{quantumPath}/demo_t2.npy")
+    q_train = np.load(f"{quantumPath}/demo_t1.npy")
+    q_valid = np.load(f"{quantumPath}/demo_t2.npy")
 
-## For Quanv Exp.
-early_stop = EarlyStopping(monitor='val_loss', mode='min', 
-                        verbose=1, patience=10, min_delta=0.0001)
+    ## For Quanv Exp.
+    early_stop = EarlyStopping(monitor='val_loss', mode='min', 
+                            verbose=1, patience=10, min_delta=0.0001)
 
-metric = 'val_accuracy'
+    metric = 'val_accuracy'
 
-checkpoint = ModelCheckpoint(f'{checkpointsPath}/checkpoint', monitor=metric, 
-                            verbose=1, save_best_only=True, mode='max')
+    checkpoint = ModelCheckpoint(f'{checkpointsPath}/checkpoint', monitor=metric, 
+                                verbose=1, save_best_only=True, mode='max')
 
 
-model = attrnn_Model(q_train[0], labels)
+    model = attrnn_Model(q_train[0], labels)
 
-model.summary()
+    model.summary()
 
-history = model.fit(
-    x=q_train, 
-    y=y_train,
-    epochs=epochs, 
-    callbacks=[checkpoint], 
-    batch_size=batchSize, 
-    validation_data=(q_valid,y_valid)
-)
+    history = model.fit(
+        x=q_train, 
+        y=y_train,
+        epochs=epochs, 
+        callbacks=[checkpoint], 
+        batch_size=batchSize, 
+        validation_data=(q_valid,y_valid)
+    )
 
-data_ix = time.strftime("%Y%m%d_%H%M")
-model.save(f"{modelsPath}/model_{time.time()}")
+    data_ix = time.strftime("%Y%m%d_%H%M")
+    model.save(f"{modelsPath}/model_{time.time()}")
