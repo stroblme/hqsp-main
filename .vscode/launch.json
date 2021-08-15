@@ -12,6 +12,13 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "Main: Generate Features MP",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceRoot}/generateFeatures_MultiProcessing.py",
+            "console": "integratedTerminal"
+        },
+        {
             "name": "Main: Train",
             "type": "python",
             "request": "launch",
