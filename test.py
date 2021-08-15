@@ -72,8 +72,10 @@ def do_test(labels, train_audio_path, sr=16000):
         y_pred = np.argmax(model.predict(all_wave), axis=1)
         print(f"\nModel returned {labels[y_pred[0]]} and label was {label} in file {datasetLabelFile}\n")
 
-datasetFiles = glob.glob(datasetPath + "/**/*.wav", recursive=True)
+if __name__ == '__main__':
 
-print(f"Found {len(datasetFiles)} files in the dataset")
+    datasetFiles = glob.glob(datasetPath + "/**/*.wav", recursive=True)
 
-do_test(labels, datasetPath)
+    print(f"Found {len(datasetFiles)} files in the dataset")
+
+    do_test(labels, datasetPath)
