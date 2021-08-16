@@ -1,0 +1,5 @@
+datasetPath = "/ceph/mstrobl/dataset"
+waveformPath = "/ceph/mstrobl/waveforms"
+featurePath = "/ceph/mstrobl/features/"
+testDatasetPath = "/ceph/mstrobl/testDataset"
+modelsPath = "/ceph/mstrobl/models"
