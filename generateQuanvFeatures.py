@@ -8,7 +8,7 @@ os.environ["LD_LIBRARY_PATH"] = "$LD_LIBRARY_PATH:/usr/local/cuda/lib64/:/usr/li
 print(os.environ.get("LD_LIBRARY_PATH"))
 import numpy as np
 
-from qcnn.small_qsr import gen_quanv
+from qcnn.small_quanv import gen_quanv
 
 datasetPath = "/ceph/mstrobl/dataset"
 featurePath = "/ceph/mstrobl/features"
