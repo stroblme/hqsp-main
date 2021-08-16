@@ -1,81 +1,119 @@
+from re import X
 import sys
-
-from tensorflow.python.keras.saving.hdf5_format import load_model_from_hdf5
 sys.path.append("./stqft")
 sys.path.append("./qcnn")
 
 import os
 #Activate the cuda env
 os.environ["LD_LIBRARY_PATH"] = "$LD_LIBRARY_PATH:/usr/local/cuda/lib64/:/usr/lib64:/usr/local/cuda/extras/CUPTI/lib64:/usr/local/cuda-11.2/lib64:/usr/local/cuda/targets/x86_64-linux/lib/"
-print(os.environ.get("LD_LIBRARY_PATH"))
+
 import glob
 import numpy as np
+
 import time
+import pickle
 
-import tensorflow as tf
-from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
-from tensorflow.keras.utils import plot_model, to_categorical
+import multiprocessing
+from multiprocessing import Pool
+
 from tensorflow.keras.models import load_model
-print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
-from sklearn.preprocessing import LabelEncoder
 
-from stqft.frontend import frontend, signal, transform
+from stqft.frontend import signal, transform
 from stqft.stqft import stqft_framework
-from stqft.stft import stft_framework
 
-from qcnn.main_qsr import labels
+from qcnn.small_qsr import gen_train_from_wave_no_split, labels
+from qcnn.small_quanv import gen_qspeech
 
-windowLength = 2**10    #1024
-overlapFactor=0.125     #128
+
+windowLength = 2**10
+overlapFactor=0.875
 windowType='hann'
 
-datasetPath = "/ceph/mstrobl/testDataset"
+datasetPath = "/ceph/mstrobl/dataset"
+testDatasetPath = "/ceph/mstrobl/testDataset"
+waveformPath = "/ceph/mstrobl/waveforms"
+featurePath = "/ceph/mstrobl/features/"
+testPath = "/ceph/mstrobl/test/"
 modelsPath = "/ceph/mstrobl/models"
 
-models = sorted(glob.glob(f"{modelsPath}/**"), key = os.path.getmtime)
 
-model = load_model(models[0], compile = True)
 
-def gen_mel(speechFile, sr=16000):
+PoolSize = int(multiprocessing.cpu_count()*0.2) #be gentle..
+av = 0
+sr=16000
+
+def gen_mel(speechFile):
+    print(f"Processing {speechFile}")
     start = time.time()
 
     y = signal(samplingRate=sr, signalType='file', path=speechFile)
-    stqft = transform(stqft_framework, suppressPrint=False, minRotation=0.2, numOfShots=1024)
+    stqft = transform(stqft_framework, suppressPrint=True, minRotation=0.2, numOfShots=1024)
     y_hat_stqft, f, t = stqft.forward(y, nSamplesWindow=windowLength, overlapFactor=overlapFactor, windowType=windowType, suppressPrint=True)
-    y_hat_stqft_p, f_p, t_p = stqft.postProcess(y_hat_stqft, f ,t, scale='mel', fmax=4000)
+    y_hat_stqft_p, f_p, t_p = stqft.postProcess(y_hat_stqft, f ,t, scale='mel', normalize=False, samplingRate=y.samplingRate, nMels=60, fmin=40.0, fmax=y.samplingRate/2)
 
     diff = time.time()-start
     print(f"Iteration took {diff} s")
     return y_hat_stqft_p
 
-def do_test(labels, train_audio_path, sr=16000):
+def poolProcess(datasetLabelFile):
+    wave = gen_mel(datasetLabelFile)
+    return np.expand_dims(wave[:,1:], axis=2)
+
+def gen_train(labels, train_audio_path, outputPath, samplingRate=16000, port=1):
+    global sr
+    sr = samplingRate
+    all_wave = list()
+    all_labels = list()
+    
     for label in labels:
+        temp_waves = list()
+        
         datasetLabelFiles = glob.glob(f"{train_audio_path}/{label}/*.wav")
 
-        all_wave = list()
-        all_label = list()
+        portDatsetLabelFiles = datasetLabelFiles[0::port]
+        print(f"\nUsing {len(portDatsetLabelFiles)} out of {len(datasetLabelFiles)} files for label '{label}'\n")
 
-        it = 1
-        for datasetLabelFile in datasetLabelFiles:
-            print(f"Processing '{datasetLabelFile}' in label '{label}' [{it}/{len(datasetLabelFiles)}]")
-            it+=1
+    
+        with Pool(PoolSize) as p:
+            temp_waves = p.map(poolProcess, portDatsetLabelFiles)
 
-            try:
-                wave = gen_mel(datasetLabelFile, sr)
-            except Exception as e:
-                print(f"Error: {e}")
-                continue
+        all_wave = all_wave + temp_waves.copy() #copy to break the reference here
+        all_labels = all_labels + [label]*len(portDatsetLabelFiles) #append the label n times
 
-            all_wave.append(np.expand_dims(wave, axis=2))
-            all_label.append(label)
+    tid = time.time()
+    print(f"Finished generating waveforms at {tid}")
+    with open(f"{waveformPath}/waveforms{tid}.pckl", 'wb') as fid:
+        pickle.dump(all_wave, fid, pickle.HIGHEST_PROTOCOL)
+    with open(f"{waveformPath}/labels{tid}.pckl", 'wb') as fid:
+        pickle.dump(all_labels, fid, pickle.HIGHEST_PROTOCOL)
+        
+    print(f"Finished dumping cache. Starting Feature export")
 
-        y_pred = np.argmax(model.predict(all_wave), axis=1)
-        print(f"\nModel returned {labels[y_pred[0]]} and label was {label} in file {datasetLabelFile}\n")
+    return gen_train_from_wave_no_split(all_wave=all_wave, all_label=all_labels, output=outputPath)
 
 if __name__ == '__main__':
+    print(f"\n\n\n-----------------------\n\n\n")
+    print(f"Generate Feature Multiprocessing @{time.time()}")
+    print(f"\n\n\n-----------------------\n\n\n")
+
+    models = sorted(glob.glob(f"{modelsPath}/**"), key = os.path.getmtime)
+
+    model = load_model(models[0], compile = True)
+
+    multiprocessing.set_start_method('spawn')
+    print(f"Running {PoolSize} processes")
 
     datasetFiles = glob.glob(datasetPath + "/**/*.wav", recursive=True)
 
     print(f"Found {len(datasetFiles)} files in the dataset")
 
-    do_test(labels, datasetPath)
+    x, y = gen_train(labels, testDatasetPath, testPath, port=10)
+
+    q = gen_qspeech(x, None, 2) 
+
+    y_preds = np.argmax(model.predict(q), axis=1)
+
+    
+    for y_pred_sample in y_preds:
+        y_idx = np.argmax(model.predict(q), axis=1)
+        print(f"\nModel returned {labels[y_idx]} and label was {y[y_idx]} in file {datasetLabelFile}\n")
