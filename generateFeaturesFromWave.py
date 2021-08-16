@@ -51,8 +51,10 @@ if __name__ == '__main__':
 
     waveformFiles = glob.glob(f"{waveformPath}/waveforms*.pckl")
     waveformFiles.sort(key=os.path.getmtime)
+    print(f"Using file {waveformFiles[-1]}")
     labelFiles = glob.glob(f"{waveformPath}/labels*.pckl")
     labelFiles.sort(key=os.path.getmtime)
+    print(f"Using file {labelFiles[-1]}")
 
     with open(waveformFiles[-1], 'rb') as fid:
         all_wave = pickle.load(fid)
