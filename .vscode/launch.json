@@ -5,24 +5,31 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Main: Generate Features",
+            "name": "Main: Generate XY Features",
             "type": "python",
             "request": "launch",
             "program": "${workspaceRoot}/generateFeatures.py",
             "console": "integratedTerminal"
         },
         {
-            "name": "Main: Generate Features MP",
+            "name": "Main: Generate XY Features MP",
             "type": "python",
             "request": "launch",
             "program": "${workspaceRoot}/generateFeatures_MultiProcessing.py",
             "console": "integratedTerminal"
         },
         {
-            "name": "Main: Generate Features From Wave",
+            "name": "Main: Generate XY Features From Wave",
             "type": "python",
             "request": "launch",
             "program": "${workspaceRoot}/generateFeaturesFromWave.py",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Main: Generate Quanv Features From XY Features",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceRoot}/generateQuanvFeatures.py",
             "console": "integratedTerminal"
         },
         {
