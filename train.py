@@ -33,8 +33,8 @@ if __name__ == '__main__':
     y_valid = np.load(f"{featurePath}/y_test_speech.npy")
 
 
-    q_train = np.load(f"{quantumPath}/demo_t1.npy")
-    q_valid = np.load(f"{quantumPath}/demo_t2.npy")
+    q_train = np.load(f"{quantumPath}/quanv_train.npy")
+    q_valid = np.load(f"{quantumPath}/quanv_test.npy")
 
     ## For Quanv Exp.
     early_stop = EarlyStopping(monitor='val_loss', mode='min', 
