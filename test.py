@@ -89,7 +89,7 @@ def gen_train(labels, train_audio_path, outputPath, samplingRate=16000, port=1):
         
     print(f"Finished dumping cache. Starting Feature export")
 
-    return gen_train_from_wave_no_split(all_wave=all_wave, all_label=all_labels, output=outputPath)
+    return gen_train_from_wave_no_split(all_wave=all_wave, all_label=all_labels)
 
 if __name__ == '__main__':
     print(f"\n\n\n-----------------------\n\n\n")
@@ -98,7 +98,7 @@ if __name__ == '__main__':
 
     models = sorted(glob.glob(f"{modelsPath}/**"), key = os.path.getmtime)
 
-    model = load_model(models[0], compile = True)
+    model = load_model(models[-1], compile = True)
 
     multiprocessing.set_start_method('spawn')
     print(f"Running {PoolSize} processes")
@@ -107,13 +107,25 @@ if __name__ == '__main__':
 
     print(f"Found {len(datasetFiles)} files in the dataset")
 
-    x, y = gen_train(labels, testDatasetPath, testPath, port=10)
+    print(f"\n\n\n-----------------------\n\n\n")
+    print(f"Generating Waveforms @{time.time()}")
+    print(f"\n\n\n-----------------------\n\n\n")
+
+    x, y = gen_train(labels, testDatasetPath, testPath, port=40)
+
+    print(f"\n\n\n-----------------------\n\n\n")
+    print(f"Generating Quantum Data @{time.time()}")
+    print(f"\n\n\n-----------------------\n\n\n")
 
     q = gen_qspeech(x, None, 2) 
 
+    print(f"\n\n\n-----------------------\n\n\n")
+    print(f"Starting Predictions @{time.time()}")
+    print(f"\n\n\n-----------------------\n\n\n")
+
     y_preds = np.argmax(model.predict(q), axis=1)
 
-    
-    for y_pred_sample in y_preds:
-        y_idx = np.argmax(model.predict(q), axis=1)
-        print(f"\nModel returned {labels[y_idx]} and label was {y[y_idx]} in file {datasetLabelFile}\n")
+    for idx in range(0, y.size-1):
+        y_idx = np.argmax(y[idx], axis=0)
+
+        print(f"\nModel returned {labels[y_preds[idx]]} and label was {labels[y_idx]}\n")
