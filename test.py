@@ -125,7 +125,20 @@ if __name__ == '__main__':
 
     y_preds = np.argmax(model.predict(q), axis=1)
 
-    for idx in range(0, y.size-1):
+    errors = dict.fromkeys(labels, 0)
+
+    for idx in range(0, y.shape[0]-1):
         y_idx = np.argmax(y[idx], axis=0)
 
-        print(f"\nModel returned {labels[y_preds[idx]]} and label was {labels[y_idx]}\n")
+        print(f"Model returned {labels[y_preds[idx]]} and label was {labels[y_idx]}")
+
+        if labels[y_preds[idx]] != labels[y_idx]:
+            errors[labels[y_idx]] += 1
+
+    print(f"Made {errors} in {y.size} samples")
+
+    print(f"\n\n\n-----------------------\n\n\n")
+
+    print(f"Error distribution over labels\n")
+    for label, nErrors in errors.items():
+        print(f"{label}:\t" + "+"*nErrors)
