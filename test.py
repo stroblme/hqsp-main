@@ -135,7 +135,7 @@ if __name__ == '__main__':
         if labels[y_preds[idx]] != labels[y_idx]:
             errors[labels[y_idx]] += 1
 
-    print(f"Made {errors} in {y.size} samples")
+    print(f"Made {errors} errors in {y.size} samples")
 
     print(f"\n\n\n-----------------------\n\n\n")
 
