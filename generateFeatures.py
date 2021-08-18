@@ -12,23 +12,26 @@ import numpy as np
 import time
 import pickle
 
-from stqft.frontend import frontend, signal, transform
+from multiprocessing import Pool
+
+
+from stqft.frontend import signal, transform
 from stqft.stqft import stqft_framework
 
-from qcnn.small_qsr import gen_train_from_wave, labels
+from qcnn.small_qsr import gen_train_from_wave
 
 
 windowLength = 2**10
 overlapFactor=0.875
-windowType='hann'
+windowType='blackman'
 
-datasetPath = "/ceph/mstrobl/dataset"
 waveformPath = "/ceph/mstrobl/waveforms"
-featurePath = "/ceph/mstrobl/features/"
 
 av = 0
+sr=16000
 
-def gen_mel(speechFile, sr=16000):
+def gen_mel(speechFile):
+    print(f"Processing {speechFile}")
     start = time.time()
 
     y = signal(samplingRate=sr, signalType='file', path=speechFile)
@@ -40,42 +43,38 @@ def gen_mel(speechFile, sr=16000):
     print(f"Iteration took {diff} s")
     return y_hat_stqft_p
 
-def gen_train(labels, train_audio_path, outputPath, sr=16000, port=1):
-    all_wave = list()
-    all_label = list()
+def poolProcess(datasetLabelFile):
+    wave = gen_mel(datasetLabelFile)
+    return np.expand_dims(wave[:,1:], axis=2)
 
+def gen_train(labels, train_audio_path, outputPath, PoolSize, waveformPath=waveformPath, samplingRate=16000, port=1):
+    global sr
+    sr = samplingRate
+    all_wave = list()
+    all_labels = list()
+    
     for label in labels:
+        temp_waves = list()
+        
         datasetLabelFiles = glob.glob(f"{train_audio_path}/{label}/*.wav")
 
-
         portDatsetLabelFiles = datasetLabelFiles[0::port]
-        print(f"Using {len(portDatsetLabelFiles)} out of {len(datasetLabelFiles)} files for label '{label}'")
+        print(f"\nUsing {len(portDatsetLabelFiles)} out of {len(datasetLabelFiles)} files for label '{label}'\n")
 
-        it = 1
-        for datasetLabelFile in portDatsetLabelFiles:
-            print(f"Processing '{datasetLabelFile}' in label '{label}' [{it}/{len(portDatsetLabelFiles)}]")
-            it+=1
-
-            wave = gen_mel(datasetLabelFile, sr)
-
-            all_wave.append(np.expand_dims(wave[:,1:], axis=2))
-            all_label.append(label)
-
-    print(f"Finished generating waveforms at {time.time()}")
     
-    with open(f"{waveformPath}/waveforms{time.time()}.pckl", 'wb') as fid:
+        with Pool(PoolSize) as p:
+            temp_waves = p.map(poolProcess, portDatsetLabelFiles)
+
+        all_wave = all_wave + temp_waves.copy() #copy to break the reference here
+        all_labels = all_labels + [label]*len(portDatsetLabelFiles) #append the label n times
+
+    tid = time.time()
+    print(f"Finished generating waveforms at {tid}")
+    with open(f"{waveformPath}/waveforms{tid}.pckl", 'wb') as fid:
         pickle.dump(all_wave, fid, pickle.HIGHEST_PROTOCOL)
-    with open(f"{waveformPath}/labels{time.time()}.pckl", 'wb') as fid:
-        pickle.dump(all_label, fid, pickle.HIGHEST_PROTOCOL)
+    with open(f"{waveformPath}/labels{tid}.pckl", 'wb') as fid:
+        pickle.dump(all_labels, fid, pickle.HIGHEST_PROTOCOL)
         
     print(f"Finished dumping cache. Starting Feature export")
 
-    return gen_train_from_wave(all_wave=all_wave, all_label=all_label, output=outputPath)
-
-if __name__ == '__main__':
-
-    datasetFiles = glob.glob(datasetPath + "/**/*.wav", recursive=True)
-
-    print(f"Found {len(datasetFiles)} files in the dataset")
-
-    gen_train(labels, datasetPath, featurePath, port=10)
+    return gen_train_from_wave(all_wave=all_wave, all_label=all_labels, output=outputPath)
