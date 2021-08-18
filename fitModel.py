@@ -18,24 +18,14 @@ from qcnn.models import attrnn_Model
 
 datasetPath = "/ceph/mstrobl/dataset"
 featurePath = "/ceph/mstrobl/features"
-checkpointsPath = "/ceph/mstrobl/checkpoints"
 modelsPath = "/ceph/mstrobl/models"
 quantumPath = "/ceph/mstrobl/data_quantum"
+checkpointsPath = "/ceph/mstrobl/checkpoints"
 
 batchSize = 16
 epochs = 30
 
-if __name__ == '__main__':
-
-    x_train = np.load(f"{featurePath}/x_train_speech.npy")
-    x_valid = np.load(f"{featurePath}/x_test_speech.npy")
-    y_train = np.load(f"{featurePath}/y_train_speech.npy")
-    y_valid = np.load(f"{featurePath}/y_test_speech.npy")
-
-
-    q_train = np.load(f"{quantumPath}/quanv_train.npy")
-    q_valid = np.load(f"{quantumPath}/quanv_test.npy")
-
+def fit_model(q_train, y_train, q_valid, y_valid, cpPath, ep=epochs, bS=batchSize):
     ## For Quanv Exp.
     early_stop = EarlyStopping(monitor='val_loss', mode='min', 
                             verbose=1, patience=10, min_delta=0.0001)
@@ -53,11 +43,25 @@ if __name__ == '__main__':
     history = model.fit(
         x=q_train, 
         y=y_train,
-        epochs=epochs, 
-        callbacks=[checkpoint], 
-        batch_size=batchSize, 
+        epochs=ep, 
+        callbacks=[cpPath], 
+        batch_size=bS, 
         validation_data=(q_valid,y_valid)
     )
+    return model
+
+if __name__ == '__main__':
+
+    x_train = np.load(f"{featurePath}/x_train_speech.npy")
+    x_valid = np.load(f"{featurePath}/x_test_speech.npy")
+    y_train = np.load(f"{featurePath}/y_train_speech.npy")
+    y_valid = np.load(f"{featurePath}/y_test_speech.npy")
+
+
+    q_train = np.load(f"{quantumPath}/quanv_train.npy")
+    q_valid = np.load(f"{quantumPath}/quanv_test.npy")
+
+    model = fit_model(q_train, y_train, q_valid, y_valid, checkpointsPath)
 
     data_ix = time.strftime("%Y%m%d_%H%M")
     model.save(f"{modelsPath}/model_{time.time()}")
