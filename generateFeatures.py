@@ -1,3 +1,4 @@
+from qcnn.small_quanv import gen_quanv
 import sys
 sys.path.append("./stqft")
 sys.path.append("./qcnn")
@@ -18,8 +19,8 @@ from multiprocessing import Pool
 from stqft.frontend import signal, transform
 from stqft.stqft import stqft_framework
 
-from qcnn.small_qsr import gen_train_from_wave
-
+from qcnn.small_qsr import gen_train_from_wave, gen_train_from_wave_no_split
+from qcnn.small_quanv import gen_quanv
 
 windowLength = 2**10
 overlapFactor=0.875
@@ -47,7 +48,7 @@ def poolProcess(datasetLabelFile):
     wave = gen_mel(datasetLabelFile)
     return np.expand_dims(wave[:,1:], axis=2)
 
-def gen_features(labels, train_audio_path, outputPath, PoolSize, waveformPath=None, samplingRate=16000, port=1):
+def gen_features(labels, train_audio_path, outputPath, PoolSize, waveformPath=None, samplingRate=16000, port=1, split=True):
     global sr
     sr = samplingRate
     all_wave = list()
@@ -80,4 +81,10 @@ def gen_features(labels, train_audio_path, outputPath, PoolSize, waveformPath=No
         print(f"Finished dumping cache")
     print(f"Starting Feature export")
 
-    return gen_train_from_wave(all_wave=all_wave, all_label=all_labels, output=outputPath)
+    if split:
+        return gen_train_from_wave(all_wave=all_wave, all_label=all_labels, output=outputPath)
+    else:
+        return gen_train_from_wave_no_split(all_wave=all_wave, all_label=all_labels)
+
+def gen_quantum(x_train, x_valid, kr, output):
+    return gen_quanv(x_train, x_valid, kr, output)
