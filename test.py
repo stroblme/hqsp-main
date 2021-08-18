@@ -29,11 +29,7 @@ testDatasetPath = "/ceph/mstrobl/testDataset"
 testPath = "/ceph/mstrobl/test/"
 modelsPath = "/ceph/mstrobl/models"
 
-
-
 PoolSize = int(multiprocessing.cpu_count()*0.2) #be gentle..
-av = 0
-
 
 if __name__ == '__main__':
     print(f"\n\n\n-----------------------\n\n\n")
