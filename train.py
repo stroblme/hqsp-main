@@ -13,14 +13,9 @@ import time
 import multiprocessing
 import glob
 
-import tensorflow as tf
-from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
-print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
-
 from generateFeatures import gen_features, gen_quantum
 from fitModel import fit_model
 from qcnn.small_qsr import labels
-from qcnn.models import attrnn_Model
 
 datasetPath = "/ceph/mstrobl/dataset"
 featurePath = "/ceph/mstrobl/features"
@@ -33,7 +28,7 @@ checkpointsPath = "/ceph/mstrobl/checkpoints"
 samplingRate = 16000
 batchSize = 16
 epochs = 30
-PoolSize = int(multiprocessing.cpu_count()*0.2) #be gentle..
+PoolSize = int(multiprocessing.cpu_count()*0.6) #be gentle..
 
 if __name__ == '__main__':
     print(f"\n\n\n-----------------------\n\n\n")
