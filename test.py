@@ -11,17 +11,12 @@ import glob
 import numpy as np
 
 import time
-import pickle
 
 import multiprocessing
-from multiprocessing import Pool
 
 from tensorflow.keras.models import load_model
 
-from stqft.frontend import signal, transform
-from stqft.stqft import stqft_framework
-
-from qcnn.small_qsr import gen_train_from_wave_no_split, labels
+from qcnn.small_qsr import labels
 from qcnn.small_quanv import gen_qspeech
 
 from generateFeatures import gen_features
@@ -45,16 +40,20 @@ if __name__ == '__main__':
     print(f"Test Time @{time.time()}")
     print(f"\n\n\n-----------------------\n\n\n")
 
-    models = sorted(glob.glob(f"{modelsPath}/**"), key = os.path.getmtime)
-
-    model = load_model(models[-1], compile = True)
-
     multiprocessing.set_start_method('spawn')
     print(f"Running {PoolSize} processes")
 
     datasetFiles = glob.glob(testDatasetPath + "/**/*.wav", recursive=True)
-
     print(f"Found {len(datasetFiles)} files in the dataset")
+
+    print(f"\n\n\n-----------------------\n\n\n")
+    print(f"Loading Model @{time.time()}")
+    print(f"\n\n\n-----------------------\n\n\n")
+    models = sorted(glob.glob(f"{modelsPath}/**"), key = os.path.getmtime)
+
+    model = load_model(models[-1], compile = True)
+
+
 
     print(f"\n\n\n-----------------------\n\n\n")
     print(f"Generating Waveforms @{time.time()}")
