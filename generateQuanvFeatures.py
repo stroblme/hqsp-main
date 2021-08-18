@@ -19,6 +19,7 @@ quantumPath = "/ceph/mstrobl/data_quantum"
 batchSize = 16
 epochs = 30
 
+
 if __name__ == '__main__':
 
     x_train = np.load(f"{featurePath}/x_train_speech.npy")
@@ -26,6 +27,9 @@ if __name__ == '__main__':
     y_train = np.load(f"{featurePath}/y_train_speech.npy")
     y_valid = np.load(f"{featurePath}/y_test_speech.npy")
 
+    print(f"\n\n\n-----------------------\n\n\n")
+    print(f"Generating Quantum Data @{time.time()}")
+    print(f"\n\n\n-----------------------\n\n\n")
 
     q_train, q_valid = gen_quanv(x_train, x_valid, 2, output=quantumPath) 
 
