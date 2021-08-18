@@ -53,8 +53,6 @@ if __name__ == '__main__':
 
     model = load_model(models[-1], compile = True)
 
-
-
     print(f"\n\n\n-----------------------\n\n\n")
     print(f"Generating Waveforms @{time.time()}")
     print(f"\n\n\n-----------------------\n\n\n")
