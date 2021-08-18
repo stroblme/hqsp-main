@@ -15,7 +15,7 @@ import multiprocessing
 
 from qcnn.small_qsr import labels
 
-from generateFeatures import gen_train
+from generateFeatures import gen_features
 
 datasetPath = "/ceph/mstrobl/dataset"
 waveformPath = "/ceph/mstrobl/waveforms"
@@ -38,4 +38,8 @@ if __name__ == '__main__':
 
     print(f"Found {len(datasetFiles)} files in the dataset")
 
-    gen_train(labels, datasetPath, featurePath, PoolSize, waveformPath=waveformPath, port=10)
+    print(f"\n\n\n-----------------------\n\n\n")
+    print(f"Generating Waveforms @{time.time()}")
+    print(f"\n\n\n-----------------------\n\n\n")
+    
+    gen_features(labels, datasetPath, featurePath, PoolSize, waveformPath=waveformPath, port=10)
