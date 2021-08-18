@@ -18,15 +18,14 @@ y_rosa_hat = librosa.feature.melspectrogram(y_rosa, sr=sr, n_fft=1024, hop_lengt
 
 y = signal(samplingRate=sr, signalType='file', path=speechFile)
 
-stqft = transform(stqft_framework, minRotation=0.2, numOfShots=2048, suppressPrint=True, fixZeroSignal=True)
-y_hat_stqft, f, t = stqft.forward(y, nSamplesWindow=1024, overlapFactor=0.875, windowType='hann')
-y_hat_stqft_p, f_p, t_p = stqft.postProcess(y_hat_stqft, f ,t, scale='mel', normalize=False, samplingRate=y.samplingRate, nMels=60, fmin=40.0, fmax=y.samplingRate/2)
+stqft = transform(stqft_framework, minRotation=0.2, numOfShots=2048, suppressPrint=True, signalFilter=True)
+y_hat_stqft, f, t = stqft.forward(y, nSamplesWindow=1024, overlapFactor=0.875, windowType='hamm')
+y_hat_stqft_p, f_p, t_p = stqft.postProcess(y_hat_stqft, f ,t, scale='mel', normalize=True, samplingRate=y.samplingRate, nMels=60, fmin=40.0, fmax=y.samplingRate/2)
 # y_hat_stqft_p, f_p, t_p = stqft.postProcess(y_hat_stqft, f ,t, scale='none', normalize=False)
 
 # mel_basis = librosa.filters.mel(sr, f.size, n_mels=60, fmin=40.0, fmax=sr/2)
 
 # y_hat_stqft_p_mel = np.dot(mel_basis[:,1:], y_hat_stqft_p)
-
 
 # test_plot(y_rosa_hat, sr)
 test_plot(y_hat_stqft_p, sr)
