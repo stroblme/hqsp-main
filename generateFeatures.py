@@ -47,7 +47,7 @@ def poolProcess(datasetLabelFile):
     wave = gen_mel(datasetLabelFile)
     return np.expand_dims(wave[:,1:], axis=2)
 
-def gen_train(labels, train_audio_path, outputPath, PoolSize, waveformPath=waveformPath, samplingRate=16000, port=1):
+def gen_features(labels, train_audio_path, outputPath, PoolSize, waveformPath=None, samplingRate=16000, port=1):
     global sr
     sr = samplingRate
     all_wave = list()
@@ -70,11 +70,14 @@ def gen_train(labels, train_audio_path, outputPath, PoolSize, waveformPath=wavef
 
     tid = time.time()
     print(f"Finished generating waveforms at {tid}")
-    with open(f"{waveformPath}/waveforms{tid}.pckl", 'wb') as fid:
-        pickle.dump(all_wave, fid, pickle.HIGHEST_PROTOCOL)
-    with open(f"{waveformPath}/labels{tid}.pckl", 'wb') as fid:
-        pickle.dump(all_labels, fid, pickle.HIGHEST_PROTOCOL)
-        
-    print(f"Finished dumping cache. Starting Feature export")
+
+    if waveformPath != None:
+        with open(f"{waveformPath}/waveforms{tid}.pckl", 'wb') as fid:
+            pickle.dump(all_wave, fid, pickle.HIGHEST_PROTOCOL)
+        with open(f"{waveformPath}/labels{tid}.pckl", 'wb') as fid:
+            pickle.dump(all_labels, fid, pickle.HIGHEST_PROTOCOL)
+            
+        print(f"Finished dumping cache")
+    print(f"Starting Feature export")
 
     return gen_train_from_wave(all_wave=all_wave, all_label=all_labels, output=outputPath)
