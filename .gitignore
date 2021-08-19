@@ -2,3 +2,5 @@ venv
 dataset
 checkpoints
 nohup.out
+.cpython
+__pycache__
