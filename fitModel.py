@@ -32,7 +32,7 @@ def fit_model(q_train, y_train, q_valid, y_valid, cpPath, ep=epochs, bS=batchSiz
 
     metric = 'val_accuracy'
 
-    checkpoint = ModelCheckpoint(f'{checkpointsPath}/checkpoint', monitor=metric, 
+    checkpoint = ModelCheckpoint(cpPath, monitor=metric, 
                                 verbose=1, save_best_only=True, mode='max')
 
 
@@ -44,7 +44,7 @@ def fit_model(q_train, y_train, q_valid, y_valid, cpPath, ep=epochs, bS=batchSiz
         x=q_train, 
         y=y_train,
         epochs=ep, 
-        callbacks=[cpPath], 
+        callbacks=[checkpoint], 
         batch_size=bS, 
         validation_data=(q_valid,y_valid)
     )
