@@ -1,4 +1,3 @@
-from re import X
 import sys
 sys.path.append("./stqft")
 sys.path.append("./qcnn")
@@ -53,13 +52,13 @@ if __name__ == '__main__':
     print(f"Generating Waveforms @{time.time()}")
     print(f"\n\n\n-----------------------\n\n\n")
 
-    x, y = gen_features(labels, testDatasetPath, testPath, PoolSize, port=40)
+    x, y = gen_features(labels, testDatasetPath, testPath, PoolSize, port=40, split=False)
 
     print(f"\n\n\n-----------------------\n\n\n")
     print(f"Generating Quantum Data @{time.time()}")
     print(f"\n\n\n-----------------------\n\n\n")
 
-    q = gen_qspeech(x, None, 2) 
+    q = gen_qspeech(x, [], 2) 
 
     print(f"\n\n\n-----------------------\n\n\n")
     print(f"Starting Predictions @{time.time()}")
