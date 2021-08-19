@@ -36,8 +36,8 @@ def gen_mel(speechFile):
     start = time.time()
 
     y = signal(samplingRate=sr, signalType='file', path=speechFile)
-    stqft = transform(stqft_framework, numOfShots=2048, suppressPrint=True, signalFilter=True)
-    y_hat_stqft, f, t = stqft.forward(y, nSamplesWindow=1024, overlapFactor=0.875, windowType='hamm', suppressPrint=True)
+    stqft = transform(stqft_framework, numOfShots=2048, suppressPrint=True, signalFilter=True, minRotation=0.1)
+    y_hat_stqft, f, t = stqft.forward(y, nSamplesWindow=1024, overlapFactor=0.875, windowType='blackman', suppressPrint=True)
     y_hat_stqft_p, f_p, t_p = stqft.postProcess(y_hat_stqft, f ,t, scale='mel', normalize=True, samplingRate=y.samplingRate, nMels=60, fmin=40.0, fmax=y.samplingRate/2)
 
     diff = time.time()-start
