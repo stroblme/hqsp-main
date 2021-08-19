@@ -41,7 +41,7 @@ if __name__ == '__main__':
     from qcnn.small_qsr import labels
     from generateFeatures import gen_features
 
-    x, y = gen_features(labels, testDatasetPath, testPath, PoolSize, port=40, split=False)
+    x, y = gen_features(labels, testDatasetPath, testPath, PoolSize, port=24, split=False) # use 10 samples
 
     print(f"\n\n\n-----------------------\n\n\n")
     print(f"Generating Quantum Data @{time.time()}")
