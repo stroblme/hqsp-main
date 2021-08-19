@@ -5,7 +5,7 @@ sys.path.append("./qcnn")
 import os
 #Activate the cuda env
 os.environ["LD_LIBRARY_PATH"] = "$LD_LIBRARY_PATH:/usr/local/cuda/lib64/:/usr/lib64:/usr/local/cuda/extras/CUPTI/lib64:/usr/local/cuda-11.2/lib64:/usr/local/cuda/targets/x86_64-linux/lib/"
-print(os.environ.get("LD_LIBRARY_PATH"))
+
 import time
 
 import multiprocessing
