@@ -22,7 +22,7 @@ checkpointsPath = "/ceph/mstrobl/checkpoints"
 samplingRate = 16000
 batchSize = 16
 epochs = 30
-PoolSize = int(multiprocessing.cpu_count()*0.6) #be gentle..
+PoolSize = int(multiprocessing.cpu_count()*0.5) #be gentle..
 
 if __name__ == '__main__':
     print(f"\n\n\n-----------------------\n\n\n")
