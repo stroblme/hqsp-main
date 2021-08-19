@@ -1,4 +1,3 @@
-from generateFeatures import gen_features
 import sys
 sys.path.append("./stqft")
 sys.path.append("./qcnn")
@@ -7,15 +6,10 @@ import os
 #Activate the cuda env
 os.environ["LD_LIBRARY_PATH"] = "$LD_LIBRARY_PATH:/usr/local/cuda/lib64/:/usr/lib64:/usr/local/cuda/extras/CUPTI/lib64:/usr/local/cuda-11.2/lib64:/usr/local/cuda/targets/x86_64-linux/lib/"
 print(os.environ.get("LD_LIBRARY_PATH"))
-import numpy as np
 import time
 
 import multiprocessing
 import glob
-
-from generateFeatures import gen_features, gen_quantum
-from fitModel import fit_model
-from qcnn.small_qsr import labels
 
 datasetPath = "/ceph/mstrobl/dataset"
 featurePath = "/ceph/mstrobl/features"
@@ -45,6 +39,9 @@ if __name__ == '__main__':
     print(f"\n\n\n-----------------------\n\n\n")
     print(f"Generating Waveforms @{time.time()}")
     print(f"\n\n\n-----------------------\n\n\n")
+    from generateFeatures import gen_features, gen_quantum
+    from qcnn.small_qsr import labels
+    
     x_train, x_valid, y_train, y_valid = gen_features(labels, datasetPath, featurePath, PoolSize, waveformPath=waveformPath, port=10, samplingRate=samplingRate)
     # x_train = np.load(f"{featurePath}/x_train_speech.npy")
     # x_valid = np.load(f"{featurePath}/x_test_speech.npy")
@@ -63,6 +60,7 @@ if __name__ == '__main__':
     print(f"\n\n\n-----------------------\n\n\n")
     print(f"Starting Training @{time.time()}")
     print(f"\n\n\n-----------------------\n\n\n")
+    from fitModel import fit_model
 
     ## For Quanv Exp.
     model = fit_model(q_train, y_train, q_valid, y_valid, checkpointsPath)
