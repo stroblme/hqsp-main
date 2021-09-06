@@ -15,14 +15,15 @@ import pickle
 
 from multiprocessing import Pool
 
-
+from stqft.utils import PI
 from stqft.frontend import signal, transform
 from stqft.stqft import stqft_framework
 
 from qcnn.small_qsr import gen_train_from_wave, gen_train_from_wave_no_split
 from qcnn.small_quanv import gen_quanv
 
-windowLength = 2**10
+nQubits=10
+windowLength = 2**nQubits
 overlapFactor=0.875
 windowType='blackman'
 
@@ -31,12 +32,12 @@ waveformPath = "/ceph/mstrobl/waveforms"
 av = 0
 sr=16000
 
-numOfShots=4096
-signalFilter=0
-minRotation=0.1
+numOfShots=2048
+signalFilter=0.02
+minRotation=PI/2**(nQubits-5)
 nSamplesWindow=1024
 overlapFactor=0.875
-windowType='hamming'
+windowType='blackman'
 suppressPrint=True
 scale='mel'
 normalize=True
