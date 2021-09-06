@@ -13,17 +13,31 @@ import time
 
 import multiprocessing
 
+samplingRate = 16000
 windowLength = 2**10
 overlapFactor=0.875
 windowType='hann'
+port=24
 
 testDatasetPath = "/ceph/mstrobl/testDataset"
-testPath = "/ceph/mstrobl/test/"
+waveformPath = "/ceph/mstrobl/testWaveforms"
+featurePath = "/ceph/mstrobl/testFeatures"
+quantumPath = "/ceph/mstrobl/testDataQuantum"
+
 modelsPath = "/ceph/mstrobl/models"
+
+exportPath = "/ceph/mstrobl/versioning"
+
+TOPIC = "PrepGenTest"
+
 
 PoolSize = int(multiprocessing.cpu_count()*0.2) #be gentle..
 
 if __name__ == '__main__':
+    from stqft.frontend import export
+
+    export.checkWorkingTree()
+
     print(f"\n\n\n-----------------------\n\n\n")
     print(f"Test Time @{time.time()}")
     print(f"\n\n\n-----------------------\n\n\n")
@@ -34,14 +48,23 @@ if __name__ == '__main__':
     datasetFiles = glob.glob(testDatasetPath + "/**/*.wav", recursive=True)
     print(f"Found {len(datasetFiles)} files in the dataset")
 
+    exp = export(topic=TOPIC, identifier="dataset", dataDir=exportPath)
+    exp.setData(export.DESCRIPTION, f"Dataset {len(datasetFiles)} in {testDatasetPath}")
+    exp.setData(export.GENERICDATA, datasetFiles)
+    exp.doExport()
 
     print(f"\n\n\n-----------------------\n\n\n")
     print(f"Generating Waveforms @{time.time()}")
     print(f"\n\n\n-----------------------\n\n\n")
+    from generateFeatures import gen_features, reportSettings
     from qcnn.small_qsr import labels
-    from generateFeatures import gen_features
 
-    x, y = gen_features(labels, testDatasetPath, testPath, PoolSize, port=24, split=False) # use 10 samples
+    x, y = gen_features(labels, testDatasetPath, featurePath, PoolSize, port=port, split=False, samplingRate=samplingRate) # use 10 samples
+
+    exp = export(topic=TOPIC, identifier="waveforms", dataDir=exportPath)
+    exp.setData(export.DESCRIPTION, f"Labels used: {labels}; FeaturePath: {featurePath}; PoolSize: {PoolSize}; WaveformPath: {waveformPath}; Portioning: {port}, SamplingRate: {samplingRate}, {reportSettings()}")
+    exp.setData(export.GENERICDATA, {"x":x, "y":y})
+    exp.doExport()
 
     print(f"\n\n\n-----------------------\n\n\n")
     print(f"Generating Quantum Data @{time.time()}")

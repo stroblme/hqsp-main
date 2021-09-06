@@ -17,7 +17,7 @@ datasetPath = "/ceph/mstrobl/dataset"
 featurePath = "/ceph/mstrobl/features"
 checkpointsPath = "/ceph/mstrobl/checkpoints"
 modelsPath = "/ceph/mstrobl/models"
-quantumPath = "/ceph/mstrobl/data_quantum"
+quantumPath = "/ceph/mstrobl/dataQuantum"
 waveformPath = "/ceph/mstrobl/waveforms"
 checkpointsPath = "/ceph/mstrobl/checkpoints"
 
