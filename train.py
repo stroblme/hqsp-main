@@ -12,7 +12,6 @@ import multiprocessing
 import glob
 import numpy as np
 
-from stqft.frontend import export
 
 datasetPath = "/ceph/mstrobl/dataset"
 featurePath = "/ceph/mstrobl/features"
@@ -33,6 +32,7 @@ port = 10
 PoolSize = int(multiprocessing.cpu_count()*0.3) #be gentle..
 
 if __name__ == '__main__':
+    from stqft.frontend import export
 
     export.checkWorkingTree()
 
@@ -57,12 +57,13 @@ if __name__ == '__main__':
 
     exp = export(topic=TOPIC, identifier="dataset", dataDir=exportPath)
     exp.setData(export.DESCRIPTION, f"Dataset {len(datasetFiles)} in {datasetPath}")
+    exp.setData(export.GENERICDATA, datasetFiles)
     exp.doExport()
 
     print(f"\n\n\n-----------------------\n\n\n")
     print(f"Generating Waveforms @{time.time()}")
     print(f"\n\n\n-----------------------\n\n\n")
-    from generateFeatures import gen_features, gen_quantum
+    from generateFeatures import gen_features, gen_quantum, reportSettings
     from qcnn.small_qsr import labels
     
     if args.waveform:
@@ -75,7 +76,7 @@ if __name__ == '__main__':
         y_valid = np.load(f"{featurePath}/y_test_speech.npy")
 
     exp = export(topic=TOPIC, identifier="waveforms", dataDir=exportPath)
-    exp.setData(export.DESCRIPTION, f"Waveforms generated (T)/ loaded (F): {args.waveform}; Labels used: {labels}; FeaturePath: {featurePath}; PoolSize: {PoolSize}; WaveformPath: {waveformPath}; Portioning: {port}, SamplingRate: {samplingRate}")
+    exp.setData(export.DESCRIPTION, f"Waveforms generated (T)/ loaded (F): {args.waveform}; Labels used: {labels}; FeaturePath: {featurePath}; PoolSize: {PoolSize}; WaveformPath: {waveformPath}; Portioning: {port}, SamplingRate: {samplingRate}, {reportSettings()}")
     exp.setData(export.GENERICDATA, {"x_train":x_train, "x_valid":x_valid, "y_train":y_train, "y_valid":y_valid})
     exp.doExport()
 
