@@ -1,5 +1,5 @@
 import sys
-
+import time
 from numpy import fmax
 sys.path.append("./stqft")
 sys.path.append("./qcnn")
@@ -14,8 +14,11 @@ speechFile = '../dataset/left/cb8f8307_nohash_7.wav'
 y_rosa, _ = librosa.load(speechFile, sr = sr)
 y_rosa_hat = librosa.feature.melspectrogram(y_rosa, sr=sr, n_fft=1024, hop_length=128, power=1.0, n_mels=60, fmin=40.0, fmax=sr/2)
 
+start = time.time()
+
 y_hat_stqft_p = gen_mel(speechFile=speechFile)
 
+print(f"Duration: {time.time()-start}")
 # y = signal(samplingRate=sr, signalType='file', path=speechFile)
 
 # stqft = transform(stqft_framework, numOfShots=2048, suppressPrint=True, signalFilter=True)
@@ -27,7 +30,7 @@ y_hat_stqft_p = gen_mel(speechFile=speechFile)
 
 # y_hat_stqft_p_mel = np.dot(mel_basis[:,1:], y_hat_stqft_p)
 
-test_plot(y_rosa_hat, sr)
+# test_plot(y_rosa_hat, sr)
 test_plot(y_hat_stqft_p, sr)
 
 input()
