@@ -31,14 +31,29 @@ waveformPath = "/ceph/mstrobl/waveforms"
 av = 0
 sr=16000
 
+numOfShots=2048
+signalFilter=True
+minRotation=0.1
+nSamplesWindow=1024
+overlapFactor=0.875
+windowType='hamming'
+suppressPrint=True
+scale='mel'
+normalize=True
+nMels=60
+fmin=40.0
+
+def reportSettings():
+    return f"numOfShots:{numOfShots}; signalFilter:{signalFilter}; minRotation:{minRotation}; nSamplesWindow:{nSamplesWindow}; overlapFactor:{overlapFactor}; windowType:{windowType}; scale:{scale}; normalize:{normalize}; nMels:{nMels}; fmin:{fmin}"
+
 def gen_mel(speechFile):
     print(f"Processing {speechFile}")
     start = time.time()
 
     y = signal(samplingRate=sr, signalType='file', path=speechFile)
-    stqft = transform(stqft_framework, numOfShots=2048, suppressPrint=True, signalFilter=True, minRotation=0.1)
-    y_hat_stqft, f, t = stqft.forward(y, nSamplesWindow=1024, overlapFactor=0.875, windowType='hamming', suppressPrint=True)
-    y_hat_stqft_p, f_p, t_p = stqft.postProcess(y_hat_stqft, f ,t, scale='mel', normalize=True, samplingRate=y.samplingRate, nMels=60, fmin=40.0, fmax=y.samplingRate/2)
+    stqft = transform(stqft_framework, numOfShots=numOfShots, suppressPrint=suppressPrint, signalFilter=signalFilter, minRotation=minRotation)
+    y_hat_stqft, f, t = stqft.forward(y, nSamplesWindow=nSamplesWindow, overlapFactor=overlapFactor, windowType=windowType, suppressPrint=suppressPrint)
+    y_hat_stqft_p, f_p, t_p = stqft.postProcess(y_hat_stqft, f ,t, scale=scale, normalize=normalize, samplingRate=y.samplingRate, nMels=nMels, fmin=fmin, fmax=y.samplingRate/2)
 
     diff = time.time()-start
     print(f"Iteration took {diff} s")
