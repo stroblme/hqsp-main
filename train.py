@@ -12,6 +12,8 @@ import multiprocessing
 import glob
 import numpy as np
 
+from stqft.frontend import export
+
 datasetPath = "/ceph/mstrobl/dataset"
 featurePath = "/ceph/mstrobl/features"
 checkpointsPath = "/ceph/mstrobl/checkpoints"
@@ -20,12 +22,17 @@ quantumPath = "/ceph/mstrobl/data_quantum"
 waveformPath = "/ceph/mstrobl/waveforms"
 checkpointsPath = "/ceph/mstrobl/checkpoints"
 
+TOPIC = "training"
+
 samplingRate = 16000
 batchSize = 16
 epochs = 30
 PoolSize = int(multiprocessing.cpu_count()*0.3) #be gentle..
 
 if __name__ == '__main__':
+
+    export.checkWorkingTree()
+
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument("--waveform", type = bool, default = True, action='store_true', help = "Generate Waveforms")
@@ -44,6 +51,10 @@ if __name__ == '__main__':
     datasetFiles = glob.glob(datasetPath + "/**/*.wav", recursive=True)
 
     print(f"Found {len(datasetFiles)} files in the dataset")
+
+    exp = export(topic=TOPIC, identifier="dataset")
+    exp.setData(export.DESCRIPTION, f"Dataset {len(datasetFiles)} in {datasetPath}")
+    exp.doExport()
 
     print(f"\n\n\n-----------------------\n\n\n")
     print(f"Generating Waveforms @{time.time()}")
