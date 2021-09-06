@@ -31,8 +31,8 @@ waveformPath = "/ceph/mstrobl/waveforms"
 av = 0
 sr=16000
 
-numOfShots=2048
-signalFilter=True
+numOfShots=4096
+signalFilter=0
 minRotation=0.1
 nSamplesWindow=1024
 overlapFactor=0.875
