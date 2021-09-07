@@ -36,7 +36,7 @@ PoolSize = int(multiprocessing.cpu_count()*0.2) #be gentle..
 if __name__ == '__main__':
     from stqft.frontend import export
 
-    export.checkWorkingTree()
+    export.checkWorkingTree(exportPath)
 
     print(f"\n\n\n-----------------------\n\n\n")
     print(f"Test Time @{time.time()}")
@@ -84,7 +84,7 @@ if __name__ == '__main__':
     from tensorflow.keras.models import load_model
 
     models = sorted(glob.glob(f"{modelsPath}/**"), key = os.path.getmtime)
-
+    print(f"Using model {models[-1]}")
     model = load_model(models[-1], compile = True)
 
 
