@@ -73,6 +73,11 @@ if __name__ == '__main__':
 
     q = gen_qspeech(x, [], 2) 
 
+    exp = export(topic=TOPIC, identifier="quantumData", dataDir=exportPath)
+    exp.setData(export.DESCRIPTION, f"Quantum data; FeaturePath: {quantumPath}")
+    exp.setData(export.GENERICDATA, {"q":q})
+    exp.doExport()
+
     print(f"\n\n\n-----------------------\n\n\n")
     print(f"Loading Model @{time.time()}")
     print(f"\n\n\n-----------------------\n\n\n")
@@ -106,3 +111,8 @@ if __name__ == '__main__':
     print(f"Error distribution over labels\n")
     for label, nErrors in errors.items():
         print(f"{label}:\t" + "+"*nErrors)
+
+    exp = export(topic=TOPIC, identifier="errors", dataDir=exportPath)
+    exp.setData(export.DESCRIPTION, f"Errors of {y.shape[0]} samples in model; ModelsPath:{modelsPath}; Labels:{labels}")
+    exp.setData(export.GENERICDATA, errors)
+    exp.doExport()
