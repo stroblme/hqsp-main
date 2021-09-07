@@ -34,13 +34,13 @@ PoolSize = int(multiprocessing.cpu_count()*0.3) #be gentle..
 if __name__ == '__main__':
     from stqft.frontend import export
 
-    export.checkWorkingTree()
+    export.checkWorkingTree(exportPath)
 
     import argparse
     parser = argparse.ArgumentParser()
-    parser.add_argument("--waveform", type = bool, default = True, action='store_true', help = "Generate Waveforms")
-    parser.add_argument("--quantum", type = bool, default = True, action='store_true', help = "Generate Quantum Data")
-    parser.add_argument("--train", type = bool, default = True, action='store_true', help = "Fit the model")
+    parser.add_argument("--waveform", default = True, action='store_true', help = "Generate Waveforms")
+    parser.add_argument("--quantum", default = True, action='store_true', help = "Generate Quantum Data")
+    parser.add_argument("--train", default = True, action='store_true', help = "Fit the model")
     args = parser.parse_args()
     
 
@@ -75,7 +75,7 @@ if __name__ == '__main__':
         y_train = np.load(f"{featurePath}/y_train_speech.npy")
         y_valid = np.load(f"{featurePath}/y_test_speech.npy")
 
-    exp = export(topic=TOPIC, identifier="waveforms", dataDir=exportPath)
+    exp = export(topic=TOPIC, identifier="waveformData", dataDir=exportPath)
     exp.setData(export.DESCRIPTION, f"Waveforms generated (T)/ loaded (F): {args.waveform}; Labels used: {labels}; FeaturePath: {featurePath}; PoolSize: {PoolSize}; WaveformPath: {waveformPath}; Portioning: {port}, SamplingRate: {samplingRate}, {reportSettings()}")
     exp.setData(export.GENERICDATA, {"x_train":x_train, "x_valid":x_valid, "y_train":y_train, "y_valid":y_valid})
     exp.doExport()
@@ -110,7 +110,6 @@ if __name__ == '__main__':
     else:
         print("Training disabled")
 
-    exp = export(topic=TOPIC, identifier="training", dataDir=exportPath)
+    exp = export(topic=TOPIC, identifier="model", dataDir=exportPath)
     exp.setData(export.DESCRIPTION, f"Model trained (T)/ loaded (F): {args.train}; CheckpointsPath: {checkpointsPath}; ModelsPath: {modelsPath}")
-    exp.setData(export.GENERICDATA, {"model":model})
     exp.doExport()
