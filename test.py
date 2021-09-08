@@ -17,7 +17,7 @@ samplingRate = 16000
 windowLength = 2**10
 overlapFactor=0.875
 windowType='hann'
-port=24
+port=10
 
 testDatasetPath = "/ceph/mstrobl/testDataset"
 waveformPath = "/ceph/mstrobl/testWaveforms"
