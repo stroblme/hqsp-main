@@ -48,7 +48,7 @@ def fit_model(q_train, y_train, q_valid, y_valid, cpPath, ep=epochs, bS=batchSiz
         batch_size=bS, 
         validation_data=(q_valid,y_valid)
     )
-    return model
+    return model, history
 
 if __name__ == '__main__':
 
