@@ -9,18 +9,24 @@ from qbstyles import mpl_style
 import librosa
 import librosa.display
 import numpy as np
+import random
 
+import sys
+sys.path.append("./stqft")
+sys.path.append("./qcnn")
 from stqft.frontend import export, frontend
+from qcnn.small_qsr import labels
 
-def melPlot(y_hat, name, sr=16000):
+def savePlot(name):
+    plt.savefig(f"./{name}.png")
+
+def melPlot(y_hat, sr=16000):
     fig, ax = plt.subplots()
     img = librosa.display.specshow(y_hat, x_axis='time', y_axis='linear', sr=sr, fmax=sr/2, ax=ax)
 
     fig.colorbar(img, ax=ax, format='%+2.0f dB')
     ax.set(title='Mel-frequency spectrogram')
 
-    # plt.show()
-    plt.savefig(f"./{name}.png")
 
 def historyPlot(history, name):
     plt.plot(history.history['loss'])
@@ -78,10 +84,29 @@ for filePath in fileList:
         elif "waveformData" in filePath:
             print(f"Waveforms:")
             print(f"{data[export.DESCRIPTION]}")
-            print(f"Generating a plot from the first sample in the train set")
-            y_hat = data[export.GENERICDATA]["x_train"][0]
-            y_hat_s = np.reshape(y_hat,y_hat.shape[0:2])
-            melPlot(y_hat_s, "trainFeatureWaveform")
+            print(f"Generating some plots from the random sample in the train set")
+
+            fig, axs = plt.subplots(1,4, sharex=True, sharey=True)
+            fig.set_size_inches(16,9)
+
+            plt.tight_layout
+
+            sr = 16000
+
+            for i in range(0,4):
+                it = random.randint(0, data[export.GENERICDATA]["x_train"].shape[0]-1)
+                oneHot = data[export.GENERICDATA]["y_train"][it]
+                y_idx = np.argmax(oneHot, axis=0)
+                name = labels[y_idx]
+                y_hat = data[export.GENERICDATA]["x_train"][it]
+                y_hat_rs = np.reshape(y_hat,y_hat.shape[0:2])
+                img = librosa.display.specshow(y_hat_rs, x_axis='time', y_axis='linear', sr=sr, fmax=sr/2, ax=axs[i])
+
+                fig.colorbar(img, ax=axs[i], format='%+2.0f dB')
+                axs[i].set(title=f'"{name}"')
+
+            savePlot("trainFeatureWaveform")
+
         # elif "quantumData" in filePath:
         #     print(f"Quantum Data:")
         #     print(f"{data[export.DESCRIPTION]}")
@@ -100,5 +125,7 @@ for filePath in fileList:
         else:
             print(f"not sure how to handle {filePath}")        
 
+
     except KeyError as e:
         print(f"Error while processing {filePath}: there was a keyerror: {e}")
+    print()
