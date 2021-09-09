@@ -96,6 +96,7 @@ if __name__ == '__main__':
 
     errors = dict.fromkeys(labels, 0)
 
+    erctr = 0
     for idx in range(0, y.shape[0]-1):
         y_idx = np.argmax(y[idx], axis=0)
 
@@ -103,8 +104,9 @@ if __name__ == '__main__':
 
         if labels[y_preds[idx]] != labels[y_idx]:
             errors[labels[y_idx]] += 1
+            erctr += 1
 
-    print(f"Made {errors} errors in {y.size} samples")
+    print(f"Made {erctr} errors in {y.shape[0]} samples")
 
     print(f"\n\n\n-----------------------\n\n\n")
 

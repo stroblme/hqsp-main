@@ -103,7 +103,7 @@ if __name__ == '__main__':
 
     if args.train:
         ## For Quanv Exp.
-        model = fit_model(q_train, y_train, q_valid, y_valid, checkpointsPath)
+        model, history = fit_model(q_train, y_train, q_valid, y_valid, checkpointsPath)
 
         data_ix = time.strftime("%Y%m%d_%H%M")
         model.save(f"{modelsPath}/model_{time.time()}")
@@ -112,4 +112,5 @@ if __name__ == '__main__':
 
     exp = export(topic=TOPIC, identifier="model", dataDir=exportPath)
     exp.setData(export.DESCRIPTION, f"Model trained (T)/ loaded (F): {args.train}; CheckpointsPath: {checkpointsPath}; ModelsPath: {modelsPath}")
+    exp.setData(export.GENERICDATA, history)
     exp.doExport()
