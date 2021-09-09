@@ -5,6 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Main: Viewer",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceRoot}/viewer.py",
+            "console": "integratedTerminal",
+        },
+        {
             "name": "Main: Generate XY Features",
             "type": "python",
             "request": "launch",
