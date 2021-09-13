@@ -71,9 +71,9 @@ if __name__ == '__main__':
     else:
         print("Loading from disk...")
         x_train = np.load(f"{featurePath}/x_train_speech.npy")
-        x_valid = np.load(f"{featurePath}/x_test_speech.npy")
+        x_valid = np.load(f"{featurePath}/x_valid_speech.npy")
         y_train = np.load(f"{featurePath}/y_train_speech.npy")
-        y_valid = np.load(f"{featurePath}/y_test_speech.npy")
+        y_valid = np.load(f"{featurePath}/y_valid_speech.npy")
 
     exp = export(topic=TOPIC, identifier="waveformData", dataDir=exportPath)
     exp.setData(export.DESCRIPTION, f"Waveforms generated (T)/ loaded (F): {args.waveform}; Labels used: {labels}; FeaturePath: {featurePath}; PoolSize: {PoolSize}; WaveformPath: {waveformPath}; Portioning: {port}, SamplingRate: {samplingRate}, {reportSettings()}")
