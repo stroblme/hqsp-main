@@ -30,7 +30,7 @@ windowType='blackman'
 waveformPath = "/ceph/mstrobl/waveforms"
 
 av = 0
-sr=16000
+sr=16000    #careful: this may be modiefied when calling gen_features
 
 numOfShots=4096
 signalFilter=0.02
@@ -51,6 +51,7 @@ def gen_mel(speechFile):
     print(f"Processing {speechFile}")
     start = time.time()
 
+    #the following parameters are subject of evaluation prior to the training process
     y = signal(samplingRate=sr, signalType='file', path=speechFile)
     stqft = transform(stqft_framework, numOfShots=numOfShots, suppressPrint=suppressPrint, signalFilter=signalFilter, minRotation=minRotation)
     y_hat_stqft, f, t = stqft.forward(y, nSamplesWindow=nSamplesWindow, overlapFactor=overlapFactor, windowType=windowType, suppressPrint=suppressPrint)
@@ -64,24 +65,22 @@ def poolProcess(datasetLabelFile):
     wave = gen_mel(datasetLabelFile)
     return np.expand_dims(wave[:,1:], axis=2)
 
-def gen_features(labels, train_audio_path, outputPath, PoolSize, waveformPath=None, samplingRate=16000, port=1, split=True):
-    global sr
-    sr = samplingRate # necessary because of a
+def gen_features(labels, train_audio_path, outputPath, PoolSize, waveformPath=None, port=1, split=True):
     all_wave = list()
     all_labels = list()
     
     i=0
-    for label in labels:
+    for label in labels:    #iterate over labels, so we don't run into concurrency issues with the mapping
         temp_waves = list()
         
-        datasetLabelFiles = glob.glob(f"{train_audio_path}/{label}/*.wav")
+        datasetLabelFiles = glob.glob(f"{train_audio_path}/{label}/*.wav")  #gather all label specific sample files
 
-        portDatsetLabelFiles = datasetLabelFiles[0::port]
+        portDatsetLabelFiles = datasetLabelFiles[0::port]   #get only a portion of those files
         print(f"\nUsing {len(portDatsetLabelFiles)} out of {len(datasetLabelFiles)} files for label '{label}'\n")
 
     
         with Pool(PoolSize) as p:
-            temp_waves = p.map(poolProcess, portDatsetLabelFiles)
+            temp_waves = p.map(poolProcess, portDatsetLabelFiles)   #mapping samples to processes and output back to waveform array
 
         all_wave = all_wave + temp_waves.copy() #copy to break the reference here
         all_labels = all_labels + [label]*len(portDatsetLabelFiles) #extend the array by the label n times
@@ -100,10 +99,13 @@ def gen_features(labels, train_audio_path, outputPath, PoolSize, waveformPath=No
         print(f"Finished dumping cache")
     print(f"Starting Feature export")
 
+    #dirty decision, but usefull when called from test.py (where we don't need to split)
     if split:
         return gen_train_from_wave(all_wave=all_wave, all_label=all_labels, output=outputPath)
     else:
         return gen_train_from_wave_no_split(all_wave=all_wave, all_label=all_labels)
 
+
 def gen_quantum(x_train, x_valid, kr, output):
+    #simple pass-through
     return gen_quanv(x_train, x_valid, kr, output)
