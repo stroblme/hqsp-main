@@ -13,15 +13,15 @@ import glob
 import numpy as np
 
 
-datasetPath = "/ceph/mstrobl/dataset"
-featurePath = "/ceph/mstrobl/features"
-checkpointsPath = "/ceph/mstrobl/checkpoints"
-modelsPath = "/ceph/mstrobl/models"
-quantumPath = "/ceph/mstrobl/dataQuantum"
-waveformPath = "/ceph/mstrobl/waveforms"
-checkpointsPath = "/ceph/mstrobl/checkpoints"
+datasetPath = "/storage/mstrobl/dataset"
+featurePath = "/storage/mstrobl/features"
+checkpointsPath = "/storage/mstrobl/checkpoints"
+modelsPath = "/storage/mstrobl/models"
+quantumPath = "/storage/mstrobl/dataQuantum"
+waveformPath = "/storage/mstrobl/waveforms"
+checkpointsPath = "/storage/mstrobl/checkpoints"
 
-exportPath = "/ceph/mstrobl/versioning"
+exportPath = "/storage/mstrobl/versioning"
 
 TOPIC = "PrepGenTrain"
 

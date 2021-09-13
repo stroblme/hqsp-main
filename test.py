@@ -19,14 +19,14 @@ overlapFactor=0.875
 windowType='hann'
 port=10
 
-testDatasetPath = "/ceph/mstrobl/testDataset"
-waveformPath = "/ceph/mstrobl/testWaveforms"
-featurePath = "/ceph/mstrobl/testFeatures"
-quantumPath = "/ceph/mstrobl/testDataQuantum"
+testDatasetPath = "/storage/mstrobl/testDataset"
+waveformPath = "/storage/mstrobl/testWaveforms"
+featurePath = "/storage/mstrobl/testFeatures"
+quantumPath = "/storage/mstrobl/testDataQuantum"
 
-modelsPath = "/ceph/mstrobl/models"
+modelsPath = "/storage/mstrobl/models"
 
-exportPath = "/ceph/mstrobl/versioning"
+exportPath = "/storage/mstrobl/versioning"
 
 TOPIC = "PrepGenTest"
 

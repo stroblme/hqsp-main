@@ -40,7 +40,7 @@ def historyPlot(history, name):
     plt.savefig(f"./{name}.png")
 frontend.setTheme(dark=True)
 
-cdir = "/ceph/mstrobl/versioning/"
+cdir = "/storage/mstrobl/versioning/"
 ignoreList = ["venv", ".vscode"]
 
 content = os.listdir(cdir)
