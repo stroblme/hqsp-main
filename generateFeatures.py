@@ -65,6 +65,8 @@ def poolProcess(datasetLabelFile):
     return np.expand_dims(wave[:,1:], axis=2)
 
 def gen_features(labels, train_audio_path, outputPath, PoolSize, waveformPath=None, samplingRate=16000, port=1, split=True):
+    global sr
+    sr = samplingRate # necessary because of a
     all_wave = list()
     all_labels = list()
     
@@ -82,7 +84,7 @@ def gen_features(labels, train_audio_path, outputPath, PoolSize, waveformPath=No
             temp_waves = p.map(poolProcess, portDatsetLabelFiles)
 
         all_wave = all_wave + temp_waves.copy() #copy to break the reference here
-        all_labels = all_labels + [label]*len(portDatsetLabelFiles) #append the label n times
+        all_labels = all_labels + [label]*len(portDatsetLabelFiles) #extend the array by the label n times
 
         print(f"\n---------[Label {i}/{len(labels)}]---------\n")
 
