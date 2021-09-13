@@ -67,7 +67,7 @@ if __name__ == '__main__':
     from qcnn.small_qsr import labels
     
     if args.waveform:
-        x_train, x_valid, y_train, y_valid = gen_features(labels, datasetPath, featurePath, PoolSize, waveformPath=waveformPath, port=port, samplingRate=samplingRate)
+        x_train, x_valid, y_train, y_valid = gen_features(labels, datasetPath, featurePath, PoolSize, waveformPath=waveformPath, port=port)
     else:
         print("Loading from disk...")
         x_train = np.load(f"{featurePath}/x_train_speech.npy")
