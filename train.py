@@ -112,5 +112,5 @@ if __name__ == '__main__':
 
     exp = export(topic=TOPIC, identifier="model", dataDir=exportPath)
     exp.setData(export.DESCRIPTION, f"Model trained (T)/ loaded (F): {args.train}; CheckpointsPath: {checkpointsPath}; ModelsPath: {modelsPath}")
-    exp.setData(export.GENERICDATA, {"history":history})
+    exp.setData(export.GENERICDATA, {"history_acc":history.history['acc'], "history_val_acc":history.history['val_acc'], "history_loss":history.history['loss'], "history_val_loss":history.history['val_loss']})
     exp.doExport()
