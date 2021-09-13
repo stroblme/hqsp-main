@@ -89,7 +89,7 @@ if __name__ == '__main__':
     else:
         print("Loading from disk...")
         q_train = np.load(f"{quantumPath}/quanv_train.npy")
-        q_valid = np.load(f"{quantumPath}/quanv_test.npy")
+        q_valid = np.load(f"{quantumPath}/quanv_valid.npy")
 
     exp = export(topic=TOPIC, identifier="quantumData", dataDir=exportPath)
     exp.setData(export.DESCRIPTION, f"Quantum data generated (T)/ loaded (F): {args.quantum}; FeaturePath: {quantumPath}")
