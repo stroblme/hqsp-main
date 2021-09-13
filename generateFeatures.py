@@ -70,6 +70,7 @@ def gen_features(labels, train_audio_path, outputPath, PoolSize, waveformPath=No
     all_wave = list()
     all_labels = list()
     
+    i=0
     for label in labels:
         temp_waves = list()
         
@@ -84,6 +85,8 @@ def gen_features(labels, train_audio_path, outputPath, PoolSize, waveformPath=No
 
         all_wave = all_wave + temp_waves.copy() #copy to break the reference here
         all_labels = all_labels + [label]*len(portDatsetLabelFiles) #append the label n times
+
+        print(f"\n---------[Label {i}/{len(labels)}]---------\n")
 
     tid = time.time()
     print(f"Finished generating waveforms at {tid}")
