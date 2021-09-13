@@ -65,8 +65,6 @@ def poolProcess(datasetLabelFile):
     return np.expand_dims(wave[:,1:], axis=2)
 
 def gen_features(labels, train_audio_path, outputPath, PoolSize, waveformPath=None, samplingRate=16000, port=1, split=True):
-    global sr
-    sr = samplingRate
     all_wave = list()
     all_labels = list()
     
