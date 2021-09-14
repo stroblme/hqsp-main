@@ -87,14 +87,14 @@ if __name__ == '__main__':
     print(f"\n\n\n-----------------------\n\n\n")
 
     if args.quantum:
-        q_train, q_valid = gen_quantum(x_train, x_valid, kernelSize, output=quantumPath)
+        q_train, q_valid = gen_quantum(x_train, x_valid, kernelSize, output=quantumPath, poolSize=PoolSize)
     else:
         print("Loading from disk...")
         q_train = np.load(f"{quantumPath}/quanv_train.npy")
         q_valid = np.load(f"{quantumPath}/quanv_valid.npy")
 
     exp = export(topic=TOPIC, identifier="quantumData", dataDir=exportPath)
-    exp.setData(export.DESCRIPTION, f"Quantum data generated (T)/ loaded (F): {args.quantum}; FeaturePath: {quantumPath}")
+    exp.setData(export.DESCRIPTION, f"Quantum data generated (T)/ loaded (F): {args.quantum}; FeaturePath: {quantumPath}; PoolSize: {PoolSize};")
     exp.setData(export.GENERICDATA, {"q_train":q_train, "q_valid":q_valid})
     exp.doExport()
 
