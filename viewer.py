@@ -1,5 +1,6 @@
 # from tkinter import *
 # from tkinter.ttk import *
+from math import ceil, floor
 import pickle
 import matplotlib.pyplot as plt
 # matplotlib.use("TkAgg")
@@ -41,7 +42,7 @@ def historyPlot(history, name):
 frontend.setTheme(dark=True)
 
 cdir = "/storage/mstrobl/versioning/"
-ignoreList = ["venv", ".vscode"]
+ignoreList = ["venv", ".vscode", ".git"]
 
 content = os.listdir(cdir)
 folderList = list()
@@ -86,24 +87,26 @@ for filePath in fileList:
             print(f"{data[export.DESCRIPTION]}")
             print(f"Generating some plots from the random sample in the train set")
 
-            fig, axs = plt.subplots(1,4, sharex=True, sharey=True)
-            fig.set_size_inches(16,9)
+            fig, axs = plt.subplots(2,5, sharex=True, sharey=True)
+            fig.set_size_inches(24,10)
 
             plt.tight_layout
 
             sr = 16000
 
-            for i in range(0,4):
-                it = random.randint(0, data[export.GENERICDATA]["x_train"].shape[0]-1)
-                oneHot = data[export.GENERICDATA]["y_train"][it]
+            for it in range(10):
+                row = floor(it/5)
+                col = it - row*5
+                oneHot = data[export.GENERICDATA]["y_train"][random.randint(0,len(data[export.GENERICDATA]["y_train"])-1)]
                 y_idx = np.argmax(oneHot, axis=0)
-                name = labels[y_idx]
+
                 y_hat = data[export.GENERICDATA]["x_train"][it]
                 y_hat_rs = np.reshape(y_hat,y_hat.shape[0:2])
-                img = librosa.display.specshow(y_hat_rs, x_axis='time', y_axis='linear', sr=sr, fmax=sr/2, ax=axs[i])
+                img = librosa.display.specshow(y_hat_rs, x_axis='time', y_axis='linear', sr=sr, fmax=sr/2, ax=axs[row][col])
 
-                fig.colorbar(img, ax=axs[i], format='%+2.0f dB')
-                axs[i].set(title=f'"{name}"')
+                fig.colorbar(img, ax=axs[row][col], format='%+2.0f dB')
+                axs[row][col].set(title=f'"{labels[y_idx]}"')
+                print(f"{row}+{col}")
 
             savePlot("trainFeatureWaveform")
 
@@ -112,16 +115,16 @@ for filePath in fileList:
         #     print(f"{data[export.DESCRIPTION]}")
         #     print(f"Generating a plot from the first sample in the train set")
         #     melPlot(data[export.GENERICDATA]["q_train"][0], "trainFeatureQuantum")
-        elif "model" in filePath:
-            print(f"Model:")
-            print(f"{data[export.DESCRIPTION]}")
-            print(f"Generating a plot from training history")
-            historyPlot(data[export.GENERICDATA]["history"], "trainHistory")
-        elif "errors" in filePath:
-            print(f"Model:")
-            print(f"{data[export.DESCRIPTION]}")
-            print(f"Generating a plot from training history")
-            historyPlot(data[export.GENERICDATA]["history"], "trainHistory")
+        # elif "model" in filePath:
+        #     print(f"Model:")
+        #     print(f"{data[export.DESCRIPTION]}")
+        #     print(f"Generating a plot from training history")
+        #     historyPlot(data[export.GENERICDATA]["history"], "trainHistory")
+        # elif "errors" in filePath:
+        #     print(f"Model:")
+        #     print(f"{data[export.DESCRIPTION]}")
+        #     print(f"Generating a plot from training history")
+        #     historyPlot(data[export.GENERICDATA]["history"], "trainHistory")
         else:
             print(f"not sure how to handle {filePath}")        
 
