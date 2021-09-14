@@ -47,6 +47,14 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "Main: Train No Waveforms",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceRoot}/train.py",
+            "args": ["--waveform=0"],
+            "console": "integratedTerminal"
+        },
+        {
             "name": "Main: Test",
             "type": "python",
             "request": "launch",
