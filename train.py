@@ -27,9 +27,11 @@ TOPIC = "PrepGenTrain"
 
 samplingRate = 16000
 batchSize = 16
+kernelSize = 2
 epochs = 30
-port = 10
-PoolSize = int(multiprocessing.cpu_count()*0.3) #be gentle..
+port = 1050
+# PoolSize = int(multiprocessing.cpu_count()*0.3) #be gentle..
+PoolSize = 3 #be gentle..
 
 if __name__ == '__main__':
     from stqft.frontend import export
@@ -85,7 +87,7 @@ if __name__ == '__main__':
     print(f"\n\n\n-----------------------\n\n\n")
 
     if args.quantum:
-        q_train, q_valid = gen_quantum(x_train, x_valid, 2, output=quantumPath)
+        q_train, q_valid = gen_quantum(x_train, x_valid, kernelSize, output=quantumPath)
     else:
         print("Loading from disk...")
         q_train = np.load(f"{quantumPath}/quanv_train.npy")
