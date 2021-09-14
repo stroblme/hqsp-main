@@ -29,8 +29,8 @@ samplingRate = 16000
 batchSize = 16
 kernelSize = 2
 epochs = 30
-portion = 100
-PoolSize = int(multiprocessing.cpu_count()*0.3) #be gentle..
+portion = 2
+PoolSize = int(multiprocessing.cpu_count()*0.6) #be gentle..
 # PoolSize = 3 #be gentle..
 
 if __name__ == '__main__':
