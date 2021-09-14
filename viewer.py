@@ -30,15 +30,24 @@ def melPlot(y_hat, sr=16000):
 
 
 def historyPlot(history, name):
-    plt.plot(history.history['loss'])
-    plt.plot(history.history['val_loss'])
-    plt.title('model loss')
-    plt.ylabel('loss')
-    plt.xlabel('epoch')
-    plt.legend(['train', 'test'], loc='upper left')
+    plt.plot(history['history_loss'])
+    plt.plot(history['history_val_loss'])
 
+    plt.plot(history['history_acc'])
+    plt.plot(history['history_val_acc'])
+
+    plt.title('model loss')
+    plt.ylabel('loss/acc')
+    plt.xlabel('epoch')
+    plt.legend(['train_loss', 'val_loss', 'train_acc', 'val_acc'], loc='upper left')
+
+    fig = plt.gcf()
+    fig.set_size_inches(16,9)
+    
     # plt.show()
-    plt.savefig(f"./{name}.png")
+    plt.savefig(f"./{name}_val_acc.png")
+
+    
 frontend.setTheme(dark=True)
 
 cdir = "/storage/mstrobl/versioning/"
@@ -115,11 +124,11 @@ for filePath in fileList:
         #     print(f"{data[export.DESCRIPTION]}")
         #     print(f"Generating a plot from the first sample in the train set")
         #     melPlot(data[export.GENERICDATA]["q_train"][0], "trainFeatureQuantum")
-        # elif "model" in filePath:
-        #     print(f"Model:")
-        #     print(f"{data[export.DESCRIPTION]}")
-        #     print(f"Generating a plot from training history")
-        #     historyPlot(data[export.GENERICDATA]["history"], "trainHistory")
+        elif "model" in filePath:
+            print(f"Model:")
+            print(f"{data[export.DESCRIPTION]}")
+            print(f"Generating a plot from training history")
+            historyPlot(data[export.GENERICDATA], "trainHistory")
         # elif "errors" in filePath:
         #     print(f"Model:")
         #     print(f"{data[export.DESCRIPTION]}")
