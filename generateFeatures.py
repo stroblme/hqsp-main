@@ -31,8 +31,8 @@ windowType='blackman'
 waveformPath = "/ceph/mstrobl/waveforms"
 
 av = 0
-sr=16000    #careful: this may be modiefied when calling gen_features
 
+samplingRate=16000    #careful: this may be modiefied when calling gen_features
 numOfShots=4096
 signalFilter=0.02
 minRotation=PI/2**(nQubits-6)
@@ -53,7 +53,7 @@ def gen_mel(speechFile):
     start = time.time()
 
     #the following parameters are subject of evaluation prior to the training process
-    y = signal(samplingRate=sr, signalType='file', path=speechFile)
+    y = signal(samplingRate=samplingRate, signalType='file', path=speechFile)
     stqft = transform(stqft_framework, numOfShots=numOfShots, suppressPrint=suppressPrint, signalFilter=signalFilter, minRotation=minRotation)
     y_hat_stqft, f, t = stqft.forward(y, nSamplesWindow=nSamplesWindow, overlapFactor=overlapFactor, windowType=windowType, suppressPrint=suppressPrint)
     y_hat_stqft_p, f_p, t_p = stqft.postProcess(y_hat_stqft, f ,t, scale=scale, normalize=normalize, samplingRate=y.samplingRate, nMels=nMels, fmin=fmin, fmax=y.samplingRate/2)
@@ -116,6 +116,6 @@ def gen_features(labels, train_audio_path, outputPath, PoolSize, waveformPath=No
         return gen_train_from_wave_no_split(all_wave=all_wave, all_label=all_labels)
 
 
-def gen_quantum(x_train, x_valid, kr, output):
+def gen_quantum(x_train, x_valid, kr, output, poolSize=1):
     #simple pass-through
-    return gen_quanv(x_train, x_valid, kr, output)
+    return gen_quanv(x_train, x_valid, kr, output, poolSize)
