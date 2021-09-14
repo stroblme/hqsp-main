@@ -14,7 +14,7 @@ import time
 import pickle
 
 # from multiprocessing import Pool
-from multiprocessing.dummy import Pool
+from multiprocessing import Pool
 
 from stqft.utils import PI
 from stqft.frontend import signal, transform
@@ -72,22 +72,30 @@ def gen_features(labels, train_audio_path, outputPath, PoolSize, waveformPath=No
     
     i=0
     for label in labels:    #iterate over labels, so we don't run into concurrency issues with the mapping
+        print(f"\n---------[Label {i}/{len(labels)}]---------\n")
         temp_waves = list()
         
         datasetLabelFiles = glob.glob(f"{train_audio_path}/{label}/*.wav")  #gather all label specific sample files
 
+        # TODO: maybe change that to "random"?
         portDatsetLabelFiles = datasetLabelFiles[0::port]   #get only a portion of those files
+        # ^ (validated) ^
         print(f"\nUsing {len(portDatsetLabelFiles)} out of {len(datasetLabelFiles)} files for label '{label}'\n")
 
     
         with Pool(PoolSize) as p:
             temp_waves = p.map(poolProcess, portDatsetLabelFiles)   #mapping samples to processes and output back to waveform array
+        # ^ (validated) ^ When running "single threaded" in the multiprocessing.dummy module with PoolSize=1
+        # ^ (validated) ^ When running in standard multiprocessing module with PoolSize=3
 
+
+        #appending waves and labels at the END of both arrays 
         all_wave = all_wave + temp_waves.copy() #copy to break the reference here
+        # ^ (validated) ^
         all_labels = all_labels + [label]*len(portDatsetLabelFiles) #extend the array by the label n times
+        # ^ (validated) ^
 
-        print(f"\n Generated {len(temp_waves)} out of {len(port)} with {len(all_labels)} labels")
-        print(f"\n---------[Label {i}/{len(labels)}]---------\n")
+        print(f"\n Generated {len(temp_waves)} waves. In total {len(all_wave)} waves and {len(all_labels)} labels\n")
 
     tid = time.time()
     print(f"Finished generating waveforms at {tid}")
