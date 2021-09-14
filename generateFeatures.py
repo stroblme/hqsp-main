@@ -86,7 +86,7 @@ def gen_features(labels, train_audio_path, outputPath, PoolSize, waveformPath=No
         all_wave = all_wave + temp_waves.copy() #copy to break the reference here
         all_labels = all_labels + [label]*len(portDatsetLabelFiles) #extend the array by the label n times
 
-        print(f"\n Generated {len(all_wave)} out of {len(port)} with {len(all_labels)} labels")
+        print(f"\n Generated {len(temp_waves)} out of {len(port)} with {len(all_labels)} labels")
         print(f"\n---------[Label {i}/{len(labels)}]---------\n")
 
     tid = time.time()

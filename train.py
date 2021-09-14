@@ -28,7 +28,7 @@ TOPIC = "PrepGenTrain"
 samplingRate = 16000
 batchSize = 16
 epochs = 30
-port = 2
+port = 10
 PoolSize = int(multiprocessing.cpu_count()*0.3) #be gentle..
 
 if __name__ == '__main__':
