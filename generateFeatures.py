@@ -66,19 +66,18 @@ def poolProcess(datasetLabelFile):
     wave = gen_mel(datasetLabelFile)
     return np.expand_dims(wave[:,1:], axis=2)
 
-def gen_features(labels, train_audio_path, outputPath, PoolSize, waveformPath=None, port=1, split=True):
+def gen_features(labels, train_audio_path, outputPath, PoolSize, waveformPath=None, portion=1, split=True):
     all_wave = list()
     all_labels = list()
     
-    i=0
-    for label in labels:    #iterate over labels, so we don't run into concurrency issues with the mapping
+    for i, label in enumerate(labels):    #iterate over labels, so we don't run into concurrency issues with the mapping
         print(f"\n---------[Label {i}/{len(labels)}]---------\n")
         temp_waves = list()
         
         datasetLabelFiles = glob.glob(f"{train_audio_path}/{label}/*.wav")  #gather all label specific sample files
 
         # TODO: maybe change that to "random"?
-        portDatsetLabelFiles = datasetLabelFiles[0::port]   #get only a portion of those files
+        portDatsetLabelFiles = datasetLabelFiles[0::portion]   #get only a portion of those files
         # ^ (validated) ^
         print(f"\nUsing {len(portDatsetLabelFiles)} out of {len(datasetLabelFiles)} files for label '{label}'\n")
 
