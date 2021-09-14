@@ -26,10 +26,10 @@ exportPath = "/storage/mstrobl/versioning"
 TOPIC = "PrepGenTrain"
 
 samplingRate = 16000
-batchSize = 16
+batchSize = 8
 kernelSize = 2
 epochs = 30
-portion = 2
+portion = 1
 PoolSize = int(multiprocessing.cpu_count()*0.6) #be gentle..
 # PoolSize = 3 #be gentle..
 
