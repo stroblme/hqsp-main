@@ -115,7 +115,7 @@ for filePath in fileList:
 
                 fig.colorbar(img, ax=axs[row][col], format='%+2.0f dB')
                 axs[row][col].set(title=f'"{labels[y_idx]}"')
-                print(f"{row}+{col}")
+                # print(f"{row}+{col}")
 
             savePlot("trainFeatureWaveform")
 
