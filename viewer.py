@@ -119,16 +119,32 @@ for filePath in fileList:
 
             savePlot("trainFeatureWaveform")
 
-        # elif "quantumData" in filePath:
-        #     print(f"Quantum Data:")
-        #     print(f"{data[export.DESCRIPTION]}")
-        #     print(f"Generating a plot from the first sample in the train set")
-        #     melPlot(data[export.GENERICDATA]["q_train"][0], "trainFeatureQuantum")
+        elif "quantumData" in filePath:
+            print(f"Quantum Data:")
+            print(f"{data[export.DESCRIPTION]}")
+            print(f"Generating a plot from the first sample in the train set")
+            melPlot(data[export.GENERICDATA]["q_train"][0], "trainFeatureQuantum")
         elif "model" in filePath:
             print(f"Model:")
             print(f"{data[export.DESCRIPTION]}")
             print(f"Generating a plot from training history")
-            historyPlot(data[export.GENERICDATA], "trainHistory")
+            plt.plot(data[export.GENERICDATA]['history_loss'])
+            plt.plot(data[export.GENERICDATA]['history_val_loss'])
+
+            plt.plot(data[export.GENERICDATA]['history_acc'])
+            plt.plot(data[export.GENERICDATA]['history_val_acc'])
+
+            plt.title('model loss')
+            plt.ylabel('loss/acc')
+            plt.xlabel('epoch')
+            plt.legend(['train_loss', 'val_loss', 'train_acc', 'val_acc'], loc='upper left')
+
+            fig = plt.gcf()
+            fig.set_size_inches(16,9)
+            
+            # plt.show()
+            savePlot("trainHistory_val_acc")
+
         # elif "errors" in filePath:
         #     print(f"Model:")
         #     print(f"{data[export.DESCRIPTION]}")
