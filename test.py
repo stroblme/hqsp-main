@@ -13,7 +13,7 @@ import time
 
 import multiprocessing
 
-port=10
+portion=10
 
 testDatasetPath = "/storage/mstrobl/testDataset"
 waveformPath = "/storage/mstrobl/testWaveforms"
@@ -55,10 +55,10 @@ if __name__ == '__main__':
     from generateFeatures import gen_features, reportSettings
     from qcnn.small_qsr import labels
 
-    x, y = gen_features(labels, testDatasetPath, featurePath, PoolSize, port=port, split=False) # use 10 samples
+    x, y = gen_features(labels, testDatasetPath, featurePath, PoolSize, portion=portion, split=False) # use 10 samples
 
     exp = export(topic=TOPIC, identifier="waveforms", dataDir=exportPath)
-    exp.setData(export.DESCRIPTION, f"Labels used: {labels}; FeaturePath: {featurePath}; PoolSize: {PoolSize}; WaveformPath: {waveformPath}; Portioning: {port}, {reportSettings()}")
+    exp.setData(export.DESCRIPTION, f"Labels used: {labels}; FeaturePath: {featurePath}; PoolSize: {PoolSize}; WaveformPath: {waveformPath}; Portioning: {portion}, {reportSettings()}")
     exp.setData(export.GENERICDATA, {"x":x, "y":y})
     exp.doExport()
 
