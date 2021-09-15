@@ -100,9 +100,9 @@ def gen_features(labels, train_audio_path, outputPath, PoolSize, waveformPath=No
     print(f"Finished generating waveforms at {tid}")
 
     if waveformPath != None:
-        with open(f"{waveformPath}/waveforms{tid}.pckl", 'wb') as fid:
+        with open(f"{waveformPath}/waveforms.pckl", 'wb') as fid:
             pickle.dump(all_wave, fid, pickle.HIGHEST_PROTOCOL)
-        with open(f"{waveformPath}/labels{tid}.pckl", 'wb') as fid:
+        with open(f"{waveformPath}/labels.pckl", 'wb') as fid:
             pickle.dump(all_labels, fid, pickle.HIGHEST_PROTOCOL)
             
         print(f"Finished dumping cache")
