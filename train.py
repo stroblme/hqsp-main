@@ -26,9 +26,9 @@ exportPath = "/storage/mstrobl/versioning"
 TOPIC = "PrepGenTrain"
 
 samplingRate = 16000
-batchSize = 8
+batchSize = 4
 kernelSize = 2
-epochs = 30
+epochs = 25
 portion = 1
 PoolSize = int(multiprocessing.cpu_count()*0.6) #be gentle..
 # PoolSize = 3 #be gentle..
@@ -41,7 +41,7 @@ if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument("--waveform", default = True, help = "Generate Waveforms")
-    parser.add_argument("--quantum", default = True, action='store_true', help = "Generate Quantum Data")
+    parser.add_argument("--quantum", default=True, help = "Generate Quantum Data")
     parser.add_argument("--train", default = True, action='store_true', help = "Fit the model")
     args = parser.parse_args()
     
@@ -86,7 +86,7 @@ if __name__ == '__main__':
     print(f"Generating Quantum Data @{time.time()}")
     print(f"\n\n\n-----------------------\n\n\n")
 
-    if args.quantum:
+    if int(args.quantum):
         q_train, q_valid = gen_quantum(x_train, x_valid, kernelSize, output=quantumPath, poolSize=PoolSize)
     else:
         print("Loading from disk...")
