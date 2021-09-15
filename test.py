@@ -67,7 +67,7 @@ if __name__ == '__main__':
     print(f"\n\n\n-----------------------\n\n\n")
     from qcnn.small_quanv import gen_quanv
 
-    q = gen_quanv(x, [], 2, quantumPath) 
+    q = gen_quanv(x, [], 2, quantumPath, poolSize=PoolSize) 
 
     exp = export(topic=TOPIC, identifier="quantumData", dataDir=exportPath)
     exp.setData(export.DESCRIPTION, f"Quantum data; FeaturePath: {quantumPath}")
