@@ -25,10 +25,9 @@ exportPath = "/storage/mstrobl/versioning"
 
 TOPIC = "PrepGenTrain"
 
-samplingRate = 16000
-batchSize = 4
+batchSize = 16
 kernelSize = 2
-epochs = 25
+epochs = 30
 portion = 1
 PoolSize = int(multiprocessing.cpu_count()*0.6) #be gentle..
 # PoolSize = 3 #be gentle..
@@ -65,7 +64,7 @@ if __name__ == '__main__':
     print(f"\n\n\n-----------------------\n\n\n")
     print(f"Generating Waveforms @{time.time()}")
     print(f"\n\n\n-----------------------\n\n\n")
-    from generateFeatures import gen_features, gen_quantum, reportSettings
+    from generateFeatures import gen_features, gen_quantum, reportSettings, samplingRate
     from qcnn.small_qsr import labels
     
     if int(args.waveform):

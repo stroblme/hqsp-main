@@ -23,21 +23,17 @@ from stqft.stqft import stqft_framework
 from qcnn.small_qsr import gen_train_from_wave, gen_train_from_wave_no_split
 from qcnn.small_quanv import gen_quanv
 
-nQubits=10
-windowLength = 2**nQubits
-overlapFactor=0.875
-windowType='blackman'
-
-waveformPath = "/ceph/mstrobl/waveforms"
 
 av = 0
 
-samplingRate=16000    #careful: this may be modiefied when calling gen_features
+nQubits=10
+samplingRate=16000    #careful: this may be modified when calling gen_features
 numOfShots=4096
 signalFilter=0.02
 minRotation=PI/2**(nQubits-6)
 nSamplesWindow=1024
 overlapFactor=0.875
+windowLength = 2**nQubits
 windowType='blackman'
 suppressPrint=True
 scale='mel'
