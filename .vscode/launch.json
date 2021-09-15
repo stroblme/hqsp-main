@@ -63,6 +63,13 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "Main: Kernel Test",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceRoot}/kernelTest.py",
+            "console": "integratedTerminal"
+        },
+        {
             "name": "Main: Test",
             "type": "python",
             "request": "launch",
