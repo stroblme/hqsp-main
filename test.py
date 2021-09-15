@@ -13,10 +13,6 @@ import time
 
 import multiprocessing
 
-samplingRate = 16000
-windowLength = 2**10
-overlapFactor=0.875
-windowType='hann'
 port=10
 
 testDatasetPath = "/storage/mstrobl/testDataset"
