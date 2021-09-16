@@ -35,7 +35,7 @@ PoolSize = int(multiprocessing.cpu_count()*0.6) #be gentle..
 if __name__ == '__main__':
     from stqft.frontend import export
 
-    export.checkWorkingTree(exportPath)
+    # export.checkWorkingTree(exportPath)
 
     import argparse
     parser = argparse.ArgumentParser()
@@ -56,10 +56,6 @@ if __name__ == '__main__':
 
     print(f"Found {len(datasetFiles)} files in the dataset")
 
-    exp = export(topic=TOPIC, identifier="dataset", dataDir=exportPath)
-    exp.setData(export.DESCRIPTION, f"Dataset {len(datasetFiles)} in {datasetPath}")
-    exp.setData(export.GENERICDATA, datasetFiles)
-    exp.doExport()
 
     print(f"\n\n\n-----------------------\n\n\n")
     print(f"Generating Waveforms @{time.time()}")
@@ -67,35 +63,21 @@ if __name__ == '__main__':
     from generateFeatures import gen_features, gen_quantum, reportSettings, samplingRate
     from qcnn.small_qsr import labels
     
-    if int(args.waveform):
-        x_train, x_valid, y_train, y_valid = gen_features(labels, datasetPath, featurePath, PoolSize, waveformPath=waveformPath, portion=portion)
-    else:
-        print("Loading from disk...")
-        x_train = np.load(f"{featurePath}/x_train_speech.npy")
-        x_valid = np.load(f"{featurePath}/x_valid_speech.npy")
-        y_train = np.load(f"{featurePath}/y_train_speech.npy")
-        y_valid = np.load(f"{featurePath}/y_valid_speech.npy")
+    print("Loading from disk...")
+    x_train = np.load(f"{featurePath}/x_train_speech.npy")
+    x_valid = np.load(f"{featurePath}/x_valid_speech.npy")
+    y_train = np.load(f"{featurePath}/y_train_speech.npy")
+    y_valid = np.load(f"{featurePath}/y_valid_speech.npy")
 
-    exp = export(topic=TOPIC, identifier="waveformData", dataDir=exportPath)
-    exp.setData(export.DESCRIPTION, f"Waveforms generated (T)/ loaded (F): {args.waveform}; Labels used: {labels}; FeaturePath: {featurePath}; PoolSize: {PoolSize}; WaveformPath: {waveformPath}; Portioning: {portion}, SamplingRate: {samplingRate}, {reportSettings()}")
-    exp.setData(export.GENERICDATA, {"x_train":x_train, "x_valid":x_valid, "y_train":y_train, "y_valid":y_valid})
-    exp.doExport()
 
     print(f"\n\n\n-----------------------\n\n\n")
     print(f"Generating Quantum Data @{time.time()}")
     print(f"\n\n\n-----------------------\n\n\n")
 
-    if int(args.quantum):
-        q_train, q_valid = gen_quantum(x_train, x_valid, kernelSize, output=quantumPath, poolSize=PoolSize)
-    else:
-        print("Loading from disk...")
-        q_train = np.load(f"{quantumPath}/quanv_train.npy")
-        q_valid = np.load(f"{quantumPath}/quanv_valid.npy")
+    print("Loading from disk...")
+    q_train = np.load(f"{quantumPath}/quanv_train.npy")
+    q_valid = np.load(f"{quantumPath}/quanv_valid.npy")
 
-    exp = export(topic=TOPIC, identifier="quantumData", dataDir=exportPath)
-    exp.setData(export.DESCRIPTION, f"Quantum data generated (T)/ loaded (F): {args.quantum}; FeaturePath: {quantumPath}; PoolSize: {PoolSize};")
-    exp.setData(export.GENERICDATA, {"q_train":q_train, "q_valid":q_valid})
-    exp.doExport()
 
     print(f"\n\n\n-----------------------\n\n\n")
     print(f"Starting Training @{time.time()}")

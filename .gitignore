@@ -4,3 +4,4 @@ checkpoints
 nohup.out
 .cpython
 __pycache__
+*.png

@@ -5,6 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Main: Viewer",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceRoot}/viewer.py",
+            "console": "integratedTerminal",
+        },
+        {
             "name": "Main: Generate XY Features",
             "type": "python",
             "request": "launch",
@@ -37,6 +44,29 @@
             "type": "python",
             "request": "launch",
             "program": "${workspaceRoot}/train.py",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Main: Train No Waveforms",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceRoot}/train.py",
+            "args": ["--waveform=0"],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Main: Train No Waveforms No Quantum",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceRoot}/train.py",
+            "args": ["--waveform=0", "--quantum=0"],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Main: Kernel Test",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceRoot}/kernelTest.py",
             "console": "integratedTerminal"
         },
         {

@@ -1,5 +1,6 @@
 # from tkinter import *
 # from tkinter.ttk import *
+from math import ceil, floor
 import pickle
 import matplotlib.pyplot as plt
 # matplotlib.use("TkAgg")
@@ -9,33 +10,48 @@ from qbstyles import mpl_style
 import librosa
 import librosa.display
 import numpy as np
+import random
 
+import sys
+sys.path.append("./stqft")
+sys.path.append("./qcnn")
 from stqft.frontend import export, frontend
+from qcnn.small_qsr import labels
 
-def melPlot(y_hat, name, sr=16000):
+def savePlot(name):
+    plt.savefig(f"./{name}.png")
+
+def melPlot(y_hat, sr=16000):
     fig, ax = plt.subplots()
     img = librosa.display.specshow(y_hat, x_axis='time', y_axis='linear', sr=sr, fmax=sr/2, ax=ax)
 
     fig.colorbar(img, ax=ax, format='%+2.0f dB')
     ax.set(title='Mel-frequency spectrogram')
 
-    # plt.show()
-    plt.savefig(f"./{name}.png")
 
 def historyPlot(history, name):
-    plt.plot(history.history['loss'])
-    plt.plot(history.history['val_loss'])
-    plt.title('model loss')
-    plt.ylabel('loss')
-    plt.xlabel('epoch')
-    plt.legend(['train', 'test'], loc='upper left')
+    plt.plot(history['history_loss'])
+    plt.plot(history['history_val_loss'])
 
+    plt.plot(history['history_acc'])
+    plt.plot(history['history_val_acc'])
+
+    plt.title('model loss')
+    plt.ylabel('loss/acc')
+    plt.xlabel('epoch')
+    plt.legend(['train_loss', 'val_loss', 'train_acc', 'val_acc'], loc='upper left')
+
+    fig = plt.gcf()
+    fig.set_size_inches(16,9)
+    
     # plt.show()
-    plt.savefig(f"./{name}.png")
+    plt.savefig(f"./{name}_val_acc.png")
+
+    
 frontend.setTheme(dark=True)
 
-cdir = "/ceph/mstrobl/versioning/"
-ignoreList = ["venv", ".vscode"]
+cdir = "/storage/mstrobl/versioning/"
+ignoreList = ["venv", ".vscode", ".git"]
 
 content = os.listdir(cdir)
 folderList = list()
@@ -78,27 +94,66 @@ for filePath in fileList:
         elif "waveformData" in filePath:
             print(f"Waveforms:")
             print(f"{data[export.DESCRIPTION]}")
+            print(f"Generating some plots from the random sample in the train set")
+
+            fig, axs = plt.subplots(2,5, sharex=True, sharey=True)
+            fig.set_size_inches(24,10)
+
+            plt.tight_layout
+
+            sr = 16000
+
+            for it in range(10):
+                row = floor(it/5)
+                col = it - row*5
+                oneHot = data[export.GENERICDATA]["y_train"][random.randint(0,len(data[export.GENERICDATA]["y_train"])-1)]
+                y_idx = np.argmax(oneHot, axis=0)
+
+                y_hat = data[export.GENERICDATA]["x_train"][it]
+                y_hat_rs = np.reshape(y_hat,y_hat.shape[0:2])
+                img = librosa.display.specshow(y_hat_rs, x_axis='time', y_axis='linear', sr=sr, fmax=sr/2, ax=axs[row][col])
+
+                fig.colorbar(img, ax=axs[row][col], format='%+2.0f dB')
+                axs[row][col].set(title=f'"{labels[y_idx]}"')
+                # print(f"{row}+{col}")
+
+            savePlot("trainFeatureWaveform")
+
+        elif "quantumData" in filePath:
+            print(f"Quantum Data:")
+            print(f"{data[export.DESCRIPTION]}")
             print(f"Generating a plot from the first sample in the train set")
-            y_hat = data[export.GENERICDATA]["x_train"][0]
-            y_hat_s = np.reshape(y_hat,y_hat.shape[0:2])
-            melPlot(y_hat_s, "trainFeatureWaveform")
-        # elif "quantumData" in filePath:
-        #     print(f"Quantum Data:")
-        #     print(f"{data[export.DESCRIPTION]}")
-        #     print(f"Generating a plot from the first sample in the train set")
-        #     melPlot(data[export.GENERICDATA]["q_train"][0], "trainFeatureQuantum")
+            melPlot(data[export.GENERICDATA]["q_train"][0], "trainFeatureQuantum")
         elif "model" in filePath:
             print(f"Model:")
             print(f"{data[export.DESCRIPTION]}")
             print(f"Generating a plot from training history")
-            historyPlot(data[export.GENERICDATA]["history"], "trainHistory")
-        elif "errors" in filePath:
-            print(f"Model:")
-            print(f"{data[export.DESCRIPTION]}")
-            print(f"Generating a plot from training history")
-            historyPlot(data[export.GENERICDATA]["history"], "trainHistory")
+            plt.plot(data[export.GENERICDATA]['history_loss'])
+            plt.plot(data[export.GENERICDATA]['history_val_loss'])
+
+            plt.plot(data[export.GENERICDATA]['history_acc'])
+            plt.plot(data[export.GENERICDATA]['history_val_acc'])
+
+            plt.title('model loss')
+            plt.ylabel('loss/acc')
+            plt.xlabel('epoch')
+            plt.legend(['train_loss', 'val_loss', 'train_acc', 'val_acc'], loc='upper left')
+
+            fig = plt.gcf()
+            fig.set_size_inches(16,9)
+            
+            # plt.show()
+            savePlot("trainHistory_val_acc")
+
+        # elif "errors" in filePath:
+        #     print(f"Model:")
+        #     print(f"{data[export.DESCRIPTION]}")
+        #     print(f"Generating a plot from training history")
+        #     historyPlot(data[export.GENERICDATA]["history"], "trainHistory")
         else:
             print(f"not sure how to handle {filePath}")        
 
+
     except KeyError as e:
         print(f"Error while processing {filePath}: there was a keyerror: {e}")
+    print()

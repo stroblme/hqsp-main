@@ -13,20 +13,16 @@ import time
 
 import multiprocessing
 
-samplingRate = 16000
-windowLength = 2**10
-overlapFactor=0.875
-windowType='hann'
-port=10
+portion=10
 
-testDatasetPath = "/ceph/mstrobl/testDataset"
-waveformPath = "/ceph/mstrobl/testWaveforms"
-featurePath = "/ceph/mstrobl/testFeatures"
-quantumPath = "/ceph/mstrobl/testDataQuantum"
+testDatasetPath = "/storage/mstrobl/testDataset"
+waveformPath = "/storage/mstrobl/testWaveforms"
+featurePath = "/storage/mstrobl/testFeatures"
+quantumPath = "/storage/mstrobl/testDataQuantum"
 
-modelsPath = "/ceph/mstrobl/models"
+modelsPath = "/storage/mstrobl/models"
 
-exportPath = "/ceph/mstrobl/versioning"
+exportPath = "/storage/mstrobl/versioning"
 
 TOPIC = "PrepGenTest"
 
@@ -59,19 +55,19 @@ if __name__ == '__main__':
     from generateFeatures import gen_features, reportSettings
     from qcnn.small_qsr import labels
 
-    x, y = gen_features(labels, testDatasetPath, featurePath, PoolSize, port=port, split=False, samplingRate=samplingRate) # use 10 samples
+    x, y = gen_features(labels=labels, train_audio_path=testDatasetPath, outputPath=featurePath, PoolSize=PoolSize, waveformPath=waveformPath, portion=portion, split=False) # use 10 samples
 
     exp = export(topic=TOPIC, identifier="waveforms", dataDir=exportPath)
-    exp.setData(export.DESCRIPTION, f"Labels used: {labels}; FeaturePath: {featurePath}; PoolSize: {PoolSize}; WaveformPath: {waveformPath}; Portioning: {port}, SamplingRate: {samplingRate}, {reportSettings()}")
+    exp.setData(export.DESCRIPTION, f"Labels used: {labels}; FeaturePath: {featurePath}; PoolSize: {PoolSize}; WaveformPath: {waveformPath}; Portioning: {portion}, {reportSettings()}")
     exp.setData(export.GENERICDATA, {"x":x, "y":y})
     exp.doExport()
 
     print(f"\n\n\n-----------------------\n\n\n")
     print(f"Generating Quantum Data @{time.time()}")
     print(f"\n\n\n-----------------------\n\n\n")
-    from qcnn.small_quanv import gen_qspeech
+    from qcnn.small_quanv import gen_quanv
 
-    q = gen_qspeech(x, [], 2) 
+    q = gen_quanv(x, [], 2, quantumPath, poolSize=PoolSize) 
 
     exp = export(topic=TOPIC, identifier="quantumData", dataDir=exportPath)
     exp.setData(export.DESCRIPTION, f"Quantum data; FeaturePath: {quantumPath}")
