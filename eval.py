@@ -18,6 +18,11 @@ start = time.time()
 
 y_hat_stqft_p = gen_mel(speechFile=speechFile)
 
+maxV=0
+for f in y_hat_stqft_p:
+    if f.max() > maxV:
+        maxV=f.max()
+
 print(f"Duration: {time.time()-start}")
 # y = signal(samplingRate=sr, signalType='file', path=speechFile)
 
