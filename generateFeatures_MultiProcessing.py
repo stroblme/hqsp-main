@@ -42,4 +42,4 @@ if __name__ == '__main__':
     print(f"Generating Waveforms @{time.time()}")
     print(f"\n\n\n-----------------------\n\n\n")
     
-    gen_features(labels, datasetPath, featurePath, PoolSize, waveformPath=waveformPath, port=10)
+    gen_features(labels, datasetPath, featurePath, PoolSize, waveformPath=waveformPath, portion=10)

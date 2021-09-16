@@ -22,18 +22,13 @@ from stqft.stqft import stqft_framework
 from qcnn.small_qsr import gen_train_from_wave, gen_train_from_wave_no_split
 from qcnn.small_quanv import gen_quanv
 
-nQubits=10
-windowLength = 2**nQubits
-overlapFactor=0.875
-windowType='blackman'
-
-waveformPath = "/ceph/mstrobl/waveforms"
-
 av = 0
-sr=16000
+samplingRate=16000
 
 numOfShots=4096
 signalFilter=0.02
+nQubits=10
+windowLength = 2**nQubits
 minRotation=PI/2**(nQubits-6)
 nSamplesWindow=1024
 overlapFactor=0.875
@@ -51,7 +46,7 @@ def gen_mel(speechFile):
     print(f"Processing {speechFile}")
     start = time.time()
 
-    y = signal(samplingRate=sr, signalType='file', path=speechFile)
+    y = signal(samplingRate=samplingRate, signalType='file', path=speechFile)
     stqft = transform(stqft_framework, numOfShots=numOfShots, suppressPrint=suppressPrint, signalFilter=signalFilter, minRotation=minRotation)
     y_hat_stqft, f, t = stqft.forward(y, nSamplesWindow=nSamplesWindow, overlapFactor=overlapFactor, windowType=windowType, suppressPrint=suppressPrint)
     y_hat_stqft_p, f_p, t_p = stqft.postProcess(y_hat_stqft, f ,t, scale=scale, normalize=normalize, samplingRate=y.samplingRate, nMels=nMels, fmin=fmin, fmax=y.samplingRate/2)
@@ -64,9 +59,9 @@ def poolProcess(datasetLabelFile):
     wave = gen_mel(datasetLabelFile)
     return np.expand_dims(wave[:,1:], axis=2)
 
-def gen_features(labels, train_audio_path, outputPath, PoolSize, waveformPath=None, samplingRate=16000, port=1, split=True):
-    global sr
-    sr = samplingRate
+def gen_features(labels, train_audio_path, outputPath, PoolSize, waveformPath=None, sr=samplingRate, portion=1, split=True):
+    global samplingRate
+    samplingRate = sr
     all_wave = list()
     all_labels = list()
     
@@ -75,7 +70,7 @@ def gen_features(labels, train_audio_path, outputPath, PoolSize, waveformPath=No
         
         datasetLabelFiles = glob.glob(f"{train_audio_path}/{label}/*.wav")
 
-        portDatsetLabelFiles = datasetLabelFiles[0::port]
+        portDatsetLabelFiles = datasetLabelFiles[0::portion]
         print(f"\nUsing {len(portDatsetLabelFiles)} out of {len(datasetLabelFiles)} files for label '{label}'\n")
 
     
