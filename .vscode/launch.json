@@ -81,6 +81,14 @@
             "type": "python",
             "request": "launch",
             "program": "${workspaceRoot}/qcnn/main_qsr.py",
+            "args": ["--mel=1", "--quanv=1"],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Main: Original Train No Waveform No Quantum",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceRoot}/qcnn/main_qsr.py",
             "args": ["--mel=0", "--quanv=0"],
             "console": "integratedTerminal"
         },
