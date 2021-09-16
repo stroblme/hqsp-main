@@ -21,31 +21,6 @@ from qcnn.small_qsr import labels
 def savePlot(name):
     plt.savefig(f"./{name}.png")
 
-def melPlot(y_hat, sr=16000):
-    fig, ax = plt.subplots()
-    img = librosa.display.specshow(y_hat, x_axis='time', y_axis='linear', sr=sr, fmax=sr/2, ax=ax)
-
-    fig.colorbar(img, ax=ax, format='%+2.0f dB')
-    ax.set(title='Mel-frequency spectrogram')
-
-
-def historyPlot(history, name):
-    plt.plot(history['history_loss'])
-    plt.plot(history['history_val_loss'])
-
-    plt.plot(history['history_acc'])
-    plt.plot(history['history_val_acc'])
-
-    plt.title('model loss')
-    plt.ylabel('loss/acc')
-    plt.xlabel('epoch')
-    plt.legend(['train_loss', 'val_loss', 'train_acc', 'val_acc'], loc='upper left')
-
-    fig = plt.gcf()
-    fig.set_size_inches(16,9)
-    
-    # plt.show()
-    plt.savefig(f"./{name}_val_acc.png")
 
     
 frontend.setTheme(dark=True)
@@ -115,7 +90,6 @@ for filePath in fileList:
 
                 fig.colorbar(img, ax=axs[row][col], format='%+2.0f dB')
                 axs[row][col].set(title=f'"{labels[y_idx]}"')
-                # print(f"{row}+{col}")
 
             savePlot("trainFeatureWaveform")
 
@@ -123,11 +97,30 @@ for filePath in fileList:
             print(f"Quantum Data:")
             print(f"{data[export.DESCRIPTION]}")
             print(f"Generating a plot from the first sample in the train set")
-            melPlot(data[export.GENERICDATA]["q_train"][0], "trainFeatureQuantum")
+
+            fig, axs = plt.subplots(1,4, sharex=True, sharey=True)
+            fig.set_size_inches(16,9)
+
+            plt.tight_layout()
+
+            q_train=data[export.GENERICDATA]['q_train']
+            for i in range(4):
+                img = librosa.display.specshow(librosa.power_to_db(q_train[0,:,:,i], ref=np.min), ax=axs[i])
+
+                fig.colorbar(img, ax=axs[i], format='%+2.0f dB')
+                axs[i].set(title=f'Channel {i}')
+
+            savePlot("trainQuantumData")
+
         elif "model" in filePath:
             print(f"Model:")
             print(f"{data[export.DESCRIPTION]}")
             print(f"Generating a plot from training history")
+
+            plt.figure()
+            fig = plt.gcf()
+            fig.set_size_inches(16,9)
+            
             plt.plot(data[export.GENERICDATA]['history_loss'])
             plt.plot(data[export.GENERICDATA]['history_val_loss'])
 
@@ -139,17 +132,8 @@ for filePath in fileList:
             plt.xlabel('epoch')
             plt.legend(['train_loss', 'val_loss', 'train_acc', 'val_acc'], loc='upper left')
 
-            fig = plt.gcf()
-            fig.set_size_inches(16,9)
-            
-            # plt.show()
             savePlot("trainHistory_val_acc")
 
-        # elif "errors" in filePath:
-        #     print(f"Model:")
-        #     print(f"{data[export.DESCRIPTION]}")
-        #     print(f"Generating a plot from training history")
-        #     historyPlot(data[export.GENERICDATA]["history"], "trainHistory")
         else:
             print(f"not sure how to handle {filePath}")        
 
