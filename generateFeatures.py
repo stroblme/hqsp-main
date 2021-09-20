@@ -37,6 +37,9 @@ overlapFactor=0.875
 windowLength = 2**nQubits
 windowType='blackman'
 suppressPrint=True
+useNoiseModel=True
+backendName="ibmq_cambridge"
+transpileOnce=True
 scale='mel'
 normalize=True
 nMels=60
@@ -53,7 +56,7 @@ def gen_mel(speechFile):
     # Frontend Signal instantiation
     y = signal(samplingRate=samplingRate, signalType='file', path=speechFile)
     # QFT init
-    stqft = transform(stqft_framework, numOfShots=numOfShots, suppressPrint=suppressPrint, signalFilter=signalFilter, minRotation=minRotation, transpileOnce=True)
+    stqft = transform(stqft_framework, numOfShots=numOfShots, suppressPrint=suppressPrint, useNoiseModel=useNoiseModel, backendName=backendName, signalFilter=signalFilter, minRotation=minRotation, transpileOnce=transpileOnce)
     # STQFT init
     y_hat_stqft, f, t = stqft.forward(y, nSamplesWindow=nSamplesWindow, overlapFactor=overlapFactor, windowType=windowType, suppressPrint=suppressPrint)
     # Frontend Post Processing
