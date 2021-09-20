@@ -10,6 +10,7 @@ from generateFeatures import gen_mel
 
 sr=16000
 speechFile = '../dataset/left/cb8f8307_nohash_7.wav'
+# speechFile = '/storage/mstrobl/dataset/left/cb8f8307_nohash_7.wav'
 
 y_rosa, _ = librosa.load(speechFile, sr = sr)
 y_rosa_hat = librosa.feature.melspectrogram(y_rosa, sr=sr, n_fft=1024, hop_length=128, power=1.0, n_mels=60, fmin=40.0, fmax=sr/2)
