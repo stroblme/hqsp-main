@@ -50,9 +50,13 @@ def gen_mel(speechFile):
     start = time.time()
 
     #the following parameters are subject of evaluation prior to the training process
+    # Frontend Signal instantiation
     y = signal(samplingRate=samplingRate, signalType='file', path=speechFile)
-    stqft = transform(stqft_framework, numOfShots=numOfShots, suppressPrint=suppressPrint, signalFilter=signalFilter, minRotation=minRotation)
+    # QFT init
+    stqft = transform(stqft_framework, numOfShots=numOfShots, suppressPrint=suppressPrint, signalFilter=signalFilter, minRotation=minRotation, transpileOnce=True)
+    # STQFT init
     y_hat_stqft, f, t = stqft.forward(y, nSamplesWindow=nSamplesWindow, overlapFactor=overlapFactor, windowType=windowType, suppressPrint=suppressPrint)
+    # Frontend Post Processing
     y_hat_stqft_p, f_p, t_p = stqft.postProcess(y_hat_stqft, f ,t, scale=scale, normalize=normalize, samplingRate=y.samplingRate, nMels=nMels, fmin=fmin, fmax=y.samplingRate/2)
 
     diff = time.time()-start
