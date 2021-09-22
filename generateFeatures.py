@@ -29,7 +29,7 @@ av = 0
 nQubits=10
 samplingRate=16000    #careful: this may be modified when calling gen_features
 numOfShots=4096
-signalFilter=0.02
+signalThreshold=0.02
 # minRotation=PI/2**(nQubits-6)
 minRotation=0
 nSamplesWindow=1024
@@ -38,19 +38,25 @@ windowLength = 2**nQubits
 windowType='blackman'
 suppressPrint=True
 useNoiseModel=True
-backendName="ibmq_guadalupe"
+backend="ibmq_guadalupe"
 suppressNoise=False
-filterBackend="ibmq_guadalupe"
+simulation=True
 transpileOnce=True
+transpOptLvl=1
+fixZeroSignal=False
 scale='mel'
 normalize=True
 nMels=60
 fmin=40.0
 
+backendStorage=None
+
 def reportSettings():
-    return f"numOfShots:{numOfShots}; signalFilter:{signalFilter}; minRotation:{minRotation}; nSamplesWindow:{nSamplesWindow}; overlapFactor:{overlapFactor}; windowType:{windowType}; scale:{scale}; normalize:{normalize}; nMels:{nMels}; fmin:{fmin}"
+    return f"numOfShots:{numOfShots}; signalFilter:{signalThreshold}; minRotation:{minRotation}; nSamplesWindow:{nSamplesWindow}; overlapFactor:{overlapFactor}; windowType:{windowType}; scale:{scale}; normalize:{normalize}; nMels:{nMels}; fmin:{fmin}"
 
 def gen_mel(speechFile):
+    global backendStorage
+
     print(f"Processing {speechFile}")
     start = time.time()
 
@@ -58,9 +64,31 @@ def gen_mel(speechFile):
     # Frontend Signal instantiation
     y = signal(samplingRate=samplingRate, signalType='file', path=speechFile)
     # QFT init
-    stqft = transform(stqft_framework, numOfShots=numOfShots, suppressPrint=suppressPrint, suppressNoise=suppressNoise, filterBackend=filterBackend, useNoiseModel=useNoiseModel, backendName=backendName, signalFilter=signalFilter, minRotation=minRotation, transpileOnce=transpileOnce)
+    if backendStorage==None:
+        stqft = transform(stqft_framework, 
+                            numOfShots=numOfShots, 
+                            minRotation=minRotation, signalThreshold=signalThreshold, fixZeroSignal=fixZeroSignal,
+                            suppressPrint=suppressPrint, draw=False,
+                            simulation=simulation,
+                            suppressNoise=suppressNoise, useNoiseModel=useNoiseModel, backend=backend, 
+                            transpileOnce=transpileOnce, transpOptLvl=transpOptLvl)
+        # store loaded backend for later use
+        backendStorage = stqft.backend
+    else:
+        stqft = transform(stqft_framework, 
+                            numOfShots=numOfShots, 
+                            minRotation=minRotation, signalThreshold=signalThreshold, fixZeroSignal=fixZeroSignal,
+                            suppressPrint=suppressPrint, draw=False,
+                            simulation=simulation,
+                            suppressNoise=suppressNoise, useNoiseModel=useNoiseModel, backend=backendStorage, 
+                            transpileOnce=transpileOnce, transpOptLvl=transpOptLvl)
+
     # STQFT init
-    y_hat_stqft, f, t = stqft.forward(y, nSamplesWindow=nSamplesWindow, overlapFactor=overlapFactor, windowType=windowType, suppressPrint=suppressPrint)
+    y_hat_stqft, f, t = stqft.forward(y, 
+                            nSamplesWindow=nSamplesWindow,
+                            overlapFactor=overlapFactor,
+                            windowType=windowType,
+                            suppressPrint=suppressPrint)
     # Frontend Post Processing
     y_hat_stqft_p, f_p, t_p = stqft.postProcess(y_hat_stqft, f ,t, scale=scale, normalize=normalize, samplingRate=y.samplingRate, nMels=nMels, fmin=fmin, fmax=y.samplingRate/2)
 
