@@ -30,8 +30,7 @@ kernelSize = 2
 epochs = 30
 portion = 2
 PoolSize = int(multiprocessing.cpu_count()*0.6) #be gentle..
-PoolSize = 1 #be gentle..
-# PoolSize = 3 #be gentle..
+# PoolSize = 1 #be gentle..
 
 if __name__ == '__main__':
     from stqft.frontend import export
