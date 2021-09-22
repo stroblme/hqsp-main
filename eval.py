@@ -17,7 +17,7 @@ y_rosa_hat = librosa.feature.melspectrogram(y_rosa, sr=sr, n_fft=1024, hop_lengt
 
 start = time.time()
 
-y_hat_stqft_p = gen_mel(speechFile=speechFile)
+y_hat_stqft_p = gen_mel(audioFile=speechFile)
 
 maxV=0
 for f in y_hat_stqft_p:
