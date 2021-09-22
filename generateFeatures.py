@@ -41,7 +41,7 @@ windowType='blackman'
 suppressPrint=True
 useNoiseModel=True
 backend="ibmq_guadalupe"
-suppressNoise=False
+noiseMitigationOpt=0
 simulation=True
 transpileOnce=True
 transpOptLvl=1
@@ -70,7 +70,7 @@ def gen_mel(audioFile:str, backendInstance=backend):
                         minRotation=minRotation, signalThreshold=signalThreshold, fixZeroSignal=fixZeroSignal,
                         suppressPrint=suppressPrint, draw=False,
                         simulation=simulation,
-                        suppressNoise=suppressNoise, useNoiseModel=useNoiseModel, backend=backendInstance, 
+                        suppressNoise=noiseMitigationOpt, useNoiseModel=useNoiseModel, backend=backendInstance, 
                         transpileOnce=transpileOnce, transpOptLvl=transpOptLvl)
 
     # STQFT init
