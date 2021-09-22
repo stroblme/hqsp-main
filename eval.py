@@ -6,6 +6,8 @@ sys.path.append("./qcnn")
 
 from stqft.tests import *
 
+from stqft.qft import loadBackend
+
 from generateFeatures import gen_mel
 
 sr=16000
@@ -17,7 +19,8 @@ y_rosa_hat = librosa.feature.melspectrogram(y_rosa, sr=sr, n_fft=1024, hop_lengt
 
 start = time.time()
 
-y_hat_stqft_p = gen_mel(audioFile=speechFile)
+_, backendInst = loadBackend(backendName="ibmq_guadalupe", simulation=True)
+y_hat_stqft_p = gen_mel(audioFile=speechFile, backendInstance=backendInst)
 
 maxV=0
 for f in y_hat_stqft_p:
