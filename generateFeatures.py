@@ -1,3 +1,4 @@
+import multiprocessing
 from qcnn.small_quanv import gen_quanv
 import sys
 sys.path.append("./stqft")
@@ -19,6 +20,7 @@ from multiprocessing import Pool
 from stqft.utils import PI
 from stqft.frontend import signal, transform
 from stqft.stqft import stqft_framework
+from stqft.qft import loadBackend
 
 from qcnn.small_qsr import gen_train_from_wave, gen_train_from_wave_no_split
 from qcnn.small_quanv import gen_quanv
@@ -49,39 +51,27 @@ normalize=True
 nMels=60
 fmin=40.0
 
-backendStorage=None
 
 def reportSettings():
     return f"numOfShots:{numOfShots}; signalFilter:{signalThreshold}; minRotation:{minRotation}; nSamplesWindow:{nSamplesWindow}; overlapFactor:{overlapFactor}; windowType:{windowType}; scale:{scale}; normalize:{normalize}; nMels:{nMels}; fmin:{fmin}"
 
-def gen_mel(speechFile):
+def gen_mel(audioFile:str, backendInstance=backend):
     global backendStorage
 
-    print(f"Processing {speechFile}")
+    print(f"Processing {audioFile}")
     start = time.time()
 
     #the following parameters are subject of evaluation prior to the training process
     # Frontend Signal instantiation
-    y = signal(samplingRate=samplingRate, signalType='file', path=speechFile)
+    y = signal(samplingRate=samplingRate, signalType='file', path=audioFile)
     # QFT init
-    if backendStorage==None:
-        stqft = transform(stqft_framework, 
-                            numOfShots=numOfShots, 
-                            minRotation=minRotation, signalThreshold=signalThreshold, fixZeroSignal=fixZeroSignal,
-                            suppressPrint=suppressPrint, draw=False,
-                            simulation=simulation,
-                            suppressNoise=suppressNoise, useNoiseModel=useNoiseModel, backend=backend, 
-                            transpileOnce=transpileOnce, transpOptLvl=transpOptLvl)
-        # store loaded backend for later use
-        backendStorage = stqft.backend
-    else:
-        stqft = transform(stqft_framework, 
-                            numOfShots=numOfShots, 
-                            minRotation=minRotation, signalThreshold=signalThreshold, fixZeroSignal=fixZeroSignal,
-                            suppressPrint=suppressPrint, draw=False,
-                            simulation=simulation,
-                            suppressNoise=suppressNoise, useNoiseModel=useNoiseModel, backend=backendStorage, 
-                            transpileOnce=transpileOnce, transpOptLvl=transpOptLvl)
+    stqft = transform(stqft_framework, 
+                        numOfShots=numOfShots, 
+                        minRotation=minRotation, signalThreshold=signalThreshold, fixZeroSignal=fixZeroSignal,
+                        suppressPrint=suppressPrint, draw=False,
+                        simulation=simulation,
+                        suppressNoise=suppressNoise, useNoiseModel=useNoiseModel, backend=backendInstance, 
+                        transpileOnce=transpileOnce, transpOptLvl=transpOptLvl)
 
     # STQFT init
     y_hat_stqft, f, t = stqft.forward(y, 
@@ -96,13 +86,15 @@ def gen_mel(speechFile):
     print(f"Iteration took {diff} s")
     return y_hat_stqft_p
 
-def poolProcess(datasetLabelFile):
-    wave = gen_mel(datasetLabelFile)
+def poolProcess(labelFileAndBackendInstance:list):
+    wave = gen_mel(*labelFileAndBackendInstance)
     return np.expand_dims(wave[:,1:], axis=2)
 
-def gen_features(labels, train_audio_path, outputPath, PoolSize, waveformPath=None, portion=1, split=True):
+def gen_features(labels:list, train_audio_path:str, outputPath:str, PoolSize:int, waveformPath:str=None, portion:int=1, split:bool=True):
     all_wave = list()
     all_labels = list()
+    _, backendInstance = loadBackend(backendName=backend, simulation=simulation)
+    # backendInstance = backend
     
     for i, label in enumerate(labels):    #iterate over labels, so we don't run into concurrency issues with the mapping
         print(f"\n---------[Label {i}/{len(labels)}]---------\n")
@@ -115,11 +107,10 @@ def gen_features(labels, train_audio_path, outputPath, PoolSize, waveformPath=No
         # ^ (validated) ^
         print(f"\nUsing {len(portDatsetLabelFiles)} out of {len(datasetLabelFiles)} files for label '{label}'\n")
 
-    
         with Pool(PoolSize) as p:
-            temp_waves = p.map(poolProcess, portDatsetLabelFiles)   #mapping samples to processes and output back to waveform array
+            temp_waves = p.map(poolProcess, list(zip(portDatsetLabelFiles,[backendInstance]*len(portDatsetLabelFiles))))   #mapping samples to processes and output back to waveform array
         # ^ (validated) ^ When running "single threaded" in the multiprocessing.dummy module with PoolSize=1
-        # ^ (validated) ^ When running in standard multiprocessing module with PoolSize=3
+            # ^ (validated) ^ When running in standard multiprocessing module with PoolSize=3
 
 
         #appending waves and labels at the END of both arrays 
