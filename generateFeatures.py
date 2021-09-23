@@ -70,7 +70,7 @@ def gen_mel(audioFile:str, backendInstance=backend):
                         minRotation=minRotation, signalThreshold=signalThreshold, fixZeroSignal=fixZeroSignal,
                         suppressPrint=suppressPrint, draw=False,
                         simulation=simulation,
-                        suppressNoise=noiseMitigationOpt, useNoiseModel=useNoiseModel, backend=backendInstance, 
+                        noiseMitigationOpt=noiseMitigationOpt, useNoiseModel=useNoiseModel, backend=backendInstance, 
                         transpileOnce=transpileOnce, transpOptLvl=transpOptLvl)
 
     # STQFT init
