@@ -28,7 +28,7 @@ TOPIC = "PrepGenTrain"
 batchSize = 4
 kernelSize = 2
 epochs = 30
-portion = 1
+portion = 2
 PoolSize = int(multiprocessing.cpu_count()*0.6) #be gentle..
 # PoolSize = 3 #be gentle..
 
@@ -39,9 +39,6 @@ if __name__ == '__main__':
 
     import argparse
     parser = argparse.ArgumentParser()
-    parser.add_argument("--waveform", default = True, help = "Generate Waveforms")
-    parser.add_argument("--quantum", default=True, help = "Generate Quantum Data")
-    parser.add_argument("--train", default = True, action='store_true', help = "Fit the model")
     args = parser.parse_args()
     
 
@@ -75,8 +72,8 @@ if __name__ == '__main__':
     print(f"\n\n\n-----------------------\n\n\n")
 
     print("Loading from disk...")
-    q_train = np.load(f"{quantumPath}/quanv_train.npy")
-    q_valid = np.load(f"{quantumPath}/quanv_valid.npy")
+    # q_train = np.load(f"{quantumPath}/quanv_train.npy")
+    # q_valid = np.load(f"{quantumPath}/quanv_valid.npy")
 
     img3d = q_train[0]
     img = np.mean(img3d, axis=2)
@@ -90,8 +87,6 @@ if __name__ == '__main__':
         librosa.display.specshow(librosa.power_to_db(q_train[0,:,:,i], ref=np.max))
         plt.title('Channel '+str(i+1)+': Quantum Compressed Speech')
     plt.tight_layout()
-
-    plt.savefig(f"./quantumImage.png")
 
     
     print(f"\n\n\n-----------------------\n\n\n")
