@@ -33,7 +33,6 @@ samplingRate=16000    #careful: this may be modified when calling gen_features
 numOfShots=4096
 signalThreshold=0.02
 minRotation=PI/2**(nQubits-6)
-# minRotation=0
 nSamplesWindow=1024
 overlapFactor=0.875
 windowLength = 2**nQubits
