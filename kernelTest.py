@@ -72,21 +72,21 @@ if __name__ == '__main__':
     print(f"\n\n\n-----------------------\n\n\n")
 
     print("Loading from disk...")
-    # q_train = np.load(f"{quantumPath}/quanv_train.npy")
-    # q_valid = np.load(f"{quantumPath}/quanv_valid.npy")
+    q_train, q_valid = gen_quantum(x_train, x_valid, kernelSize, output=quantumPath, poolSize=PoolSize)
+
 
     img3d = q_train[0]
     img = np.mean(img3d, axis=2)
 
-    import matplotlib.pyplot as plt
+    # import matplotlib.pyplot as plt
 
-    import librosa.display
-    plt.figure()
-    for i in range(4):
-        plt.subplot(5, 1, i+2)
-        librosa.display.specshow(librosa.power_to_db(q_train[0,:,:,i], ref=np.max))
-        plt.title('Channel '+str(i+1)+': Quantum Compressed Speech')
-    plt.tight_layout()
+    # import librosa.display
+    # plt.figure()
+    # for i in range(4):
+    #     plt.subplot(5, 1, i+2)
+    #     librosa.display.specshow(librosa.power_to_db(q_train[0,:,:,i], ref=np.max))
+    #     plt.title('Channel '+str(i+1)+': Quantum Compressed Speech')
+    # plt.tight_layout()
 
     
     print(f"\n\n\n-----------------------\n\n\n")

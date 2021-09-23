@@ -141,4 +141,4 @@ def gen_features(labels:list, train_audio_path:str, outputPath:str, PoolSize:int
 
 def gen_quantum(x_train, x_valid, kr, output, poolSize=1):
     #simple pass-through
-    return gen_quanv(x_train, x_valid, kr, output, poolSize)
+    return gen_quanv(x_train, x_valid, kr, output, poolSize, quanv=False)
