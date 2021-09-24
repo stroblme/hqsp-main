@@ -72,11 +72,13 @@ if __name__ == '__main__':
     print(f"\n\n\n-----------------------\n\n\n")
 
     print("Loading from disk...")
-    q_train, q_valid = gen_quantum(x_train, x_valid, kernelSize, output=quantumPath, poolSize=PoolSize)
+    q_train_ref = np.load(f"{quantumPath}/quanv_train.npy")
+    q_valid_ref = np.load(f"{quantumPath}/quanv_valid.npy")
 
+    q_train, q_valid = gen_quantum(x_train, x_valid, kernelSize, output=None, poolSize=PoolSize, quanv=False)
 
-    img3d = q_train[0]
-    img = np.mean(img3d, axis=2)
+    assert q_train.shape == q_train_ref.shape
+    assert q_valid.shape == q_valid_ref.shape
 
     # import matplotlib.pyplot as plt
 
