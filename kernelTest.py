@@ -96,14 +96,11 @@ if __name__ == '__main__':
     print(f"\n\n\n-----------------------\n\n\n")
     from fitModel import fit_model
 
-    if args.train:
-        # pass quanv data for training and validation
-        model, history = fit_model(q_train, y_train, q_valid, y_valid, checkpointsPath)
+    # pass quanv data for training and validation
+    model, history = fit_model(q_train, y_train, q_valid, y_valid, checkpointsPath)
 
-        data_ix = time.strftime("%Y%m%d_%H%M")
-        model.save(f"{modelsPath}/model_{time.time()}")
-    else:
-        print("Training disabled")
+    data_ix = time.strftime("%Y%m%d_%H%M")
+    model.save(f"{modelsPath}/model_{time.time()}")
 
     exp = export(topic=TOPIC, identifier="model", dataDir=exportPath)
     exp.setData(export.DESCRIPTION, f"Model trained (T)/ loaded (F): {args.train}; CheckpointsPath: {checkpointsPath}; ModelsPath: {modelsPath}")
