@@ -6,8 +6,8 @@ sys.path.append("./qcnn")
 
 
 sr=16000
-speechFile = '../dataset/left/cb8f8307_nohash_7.wav'
-# speechFile = '/storage/mstrobl/dataset/left/cb8f8307_nohash_7.wav'
+# speechFile = '../dataset/left/cb8f8307_nohash_7.wav'
+speechFile = '/storage/mstrobl/dataset/left/cb8f8307_nohash_7.wav'
 
 if __name__ == '__main__':
     from stqft.tests import *
