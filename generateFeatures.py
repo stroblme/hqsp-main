@@ -55,7 +55,7 @@ fmin=40.0
 def reportSettings():
     return f"numOfShots:{numOfShots}; signalFilter:{signalThreshold}; minRotation:{minRotation}; nSamplesWindow:{nSamplesWindow}; overlapFactor:{overlapFactor}; windowType:{windowType}; scale:{scale}; normalize:{normalize}; nMels:{nMels}; fmin:{fmin}"
 
-def gen_mel(audioFile:str, backendInstance=backend, filterResultCounts=None):
+def gen_mel(audioFile:str, backendInstance=backend, noiseModel=None, filterResultCounts=None):
     global backendStorage
 
     print(f"Processing {audioFile}")
@@ -71,7 +71,7 @@ def gen_mel(audioFile:str, backendInstance=backend, filterResultCounts=None):
                         suppressPrint=suppressPrint, draw=False,
                         simulation=simulation,
                         noiseMitigationOpt=noiseMitigationOpt, filterResultCounts=filterResultCounts,
-                        useNoiseModel=useNoiseModel, backend=backendInstance, 
+                        useNoiseModel=useNoiseModel, noiseModel=noiseModel, backend=backendInstance, 
                         transpileOnce=transpileOnce, transpOptLvl=transpOptLvl)
 
     # STQFT init
@@ -94,6 +94,8 @@ def poolProcess(labelFileAndBackendInstance:list):
 def gen_features(labels:list, train_audio_path:str, outputPath:str, PoolSize:int, waveformPath:str=None, portion:int=1, split:bool=True):
     all_wave = list()
     all_labels = list()
+
+    # need to do some pre-initialization mostly because of api restrictions and resources concerns
     _, backendInstance = loadBackend(backendName=backend, simulation=simulation)
     _, noiseModel = loadNoiseModel(backendName=backend)
     filterResultCounts = setupMeasurementFitter(backend, noiseModel,
@@ -114,7 +116,7 @@ def gen_features(labels:list, train_audio_path:str, outputPath:str, PoolSize:int
         print(f"\nUsing {len(portDatsetLabelFiles)} out of {len(datasetLabelFiles)} files for label '{label}'\n")
 
         with Pool(PoolSize) as p:
-            temp_waves = p.map(poolProcess, list(zip(portDatsetLabelFiles,[backendInstance]*len(portDatsetLabelFiles), [filterResultCounts]*len(portDatsetLabelFiles))))   #mapping samples to processes and output back to waveform array
+            temp_waves = p.map(poolProcess, list(zip(portDatsetLabelFiles,[backendInstance]*len(portDatsetLabelFiles), [noiseModel]*len(portDatsetLabelFiles), [filterResultCounts]*len(portDatsetLabelFiles))))   #mapping samples to processes and output back to waveform array
         # ^ (validated) ^ When running "single threaded" in the multiprocessing.dummy module with PoolSize=1
             # ^ (validated) ^ When running in standard multiprocessing module with PoolSize=3
 
