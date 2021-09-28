@@ -98,7 +98,7 @@ def gen_features(labels:list, train_audio_path:str, outputPath:str, PoolSize:int
     # need to do some pre-initialization mostly because of api restrictions and resources concerns
     _, backendInstance = loadBackend(backendName=backend, simulation=simulation)
     _, noiseModel = loadNoiseModel(backendName=backend)
-    filterResultCounts = setupMeasurementFitter(backend, noiseModel,
+    filterResultCounts = setupMeasurementFitter(backendInstance, noiseModel,
                                                 transpOptLvl=transpOptLvl, nQubits=nQubits,
                                                 nShots=numOfShots, nRuns=numOfRuns,
                                                 suppressPrint=suppressPrint)
