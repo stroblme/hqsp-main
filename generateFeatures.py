@@ -20,7 +20,7 @@ from multiprocessing import Pool
 from stqft.utils import PI
 from stqft.frontend import signal, transform
 from stqft.stqft import stqft_framework
-from stqft.qft import loadBackend
+from stqft.qft import loadBackend, loadNoiseModel, setupMeasurementFitter
 
 from qcnn.small_qsr import gen_train_from_wave, gen_train_from_wave_no_split
 from qcnn.small_quanv import gen_quanv
@@ -32,7 +32,7 @@ nQubits=10
 samplingRate=16000    #careful: this may be modified when calling gen_features
 numOfShots=4096
 signalThreshold=0.02
-minRotation=PI/2**(nQubits-4)
+minRotation=PI/2**(nQubits-2)
 nSamplesWindow=1024
 overlapFactor=0.875
 windowLength = 2**nQubits
@@ -41,6 +41,7 @@ suppressPrint=True
 useNoiseModel=True
 backend="ibmq_guadalupe"
 noiseMitigationOpt=0
+numOfRuns=1
 simulation=True
 transpileOnce=True
 transpOptLvl=1
@@ -54,7 +55,7 @@ fmin=40.0
 def reportSettings():
     return f"numOfShots:{numOfShots}; signalFilter:{signalThreshold}; minRotation:{minRotation}; nSamplesWindow:{nSamplesWindow}; overlapFactor:{overlapFactor}; windowType:{windowType}; scale:{scale}; normalize:{normalize}; nMels:{nMels}; fmin:{fmin}"
 
-def gen_mel(audioFile:str, backendInstance=backend):
+def gen_mel(audioFile:str, backendInstance=backend, filterResultCounts=None):
     global backendStorage
 
     print(f"Processing {audioFile}")
@@ -69,7 +70,8 @@ def gen_mel(audioFile:str, backendInstance=backend):
                         minRotation=minRotation, signalThreshold=signalThreshold, fixZeroSignal=fixZeroSignal,
                         suppressPrint=suppressPrint, draw=False,
                         simulation=simulation,
-                        noiseMitigationOpt=noiseMitigationOpt, useNoiseModel=useNoiseModel, backend=backendInstance, 
+                        noiseMitigationOpt=noiseMitigationOpt, filterResultCounts=filterResultCounts,
+                        useNoiseModel=useNoiseModel, backend=backendInstance, 
                         transpileOnce=transpileOnce, transpOptLvl=transpOptLvl)
 
     # STQFT init
@@ -93,6 +95,11 @@ def gen_features(labels:list, train_audio_path:str, outputPath:str, PoolSize:int
     all_wave = list()
     all_labels = list()
     _, backendInstance = loadBackend(backendName=backend, simulation=simulation)
+    _, noiseModel = loadNoiseModel(backendName=backend)
+    filterResultCounts = setupMeasurementFitter(backend, noiseModel,
+                                                transpOptLvl=transpOptLvl, nQubits=nQubits,
+                                                nShots=numOfShots, nRuns=numOfRuns,
+                                                suppressPrint=suppressPrint)
     # backendInstance = backend
     
     for i, label in enumerate(labels):    #iterate over labels, so we don't run into concurrency issues with the mapping
@@ -107,7 +114,7 @@ def gen_features(labels:list, train_audio_path:str, outputPath:str, PoolSize:int
         print(f"\nUsing {len(portDatsetLabelFiles)} out of {len(datasetLabelFiles)} files for label '{label}'\n")
 
         with Pool(PoolSize) as p:
-            temp_waves = p.map(poolProcess, list(zip(portDatsetLabelFiles,[backendInstance]*len(portDatsetLabelFiles))))   #mapping samples to processes and output back to waveform array
+            temp_waves = p.map(poolProcess, list(zip(portDatsetLabelFiles,[backendInstance]*len(portDatsetLabelFiles), [filterResultCounts]*len(portDatsetLabelFiles))))   #mapping samples to processes and output back to waveform array
         # ^ (validated) ^ When running "single threaded" in the multiprocessing.dummy module with PoolSize=1
             # ^ (validated) ^ When running in standard multiprocessing module with PoolSize=3
 
