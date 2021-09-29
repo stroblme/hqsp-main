@@ -32,7 +32,7 @@ nQubits=10
 samplingRate=16000    #careful: this may be modified when calling gen_features
 numOfShots=4096
 signalThreshold=0.02
-minRotation=PI/2**(nQubits-3)
+minRotation=PI/2**(nQubits-5)
 nSamplesWindow=1024
 overlapFactor=0.875
 windowLength = 2**nQubits
@@ -98,13 +98,16 @@ def gen_features(labels:list, train_audio_path:str, outputPath:str, PoolSize:int
 
     # need to do some pre-initialization mostly because of api restrictions and resources concerns
     _, backendInstance = loadBackend(backendName=backend, simulation=simulation)
-    _, noiseModel = loadNoiseModel(backendName=backend)
-    filterResultCounts = setupMeasurementFitter(backendInstance, noiseModel,
-                                                transpOptLvl=transpOptLvl, nQubits=nQubits,
-                                                nShots=numOfShots, nRuns=numOfRuns,
-                                                suppressPrint=suppressPrint)
-    # backendInstance = backend
-    
+    _, noiseModel = loadNoiseModel(backendName=backendInstance)
+
+    if noiseMitigationOpt != 0:
+        filterResultCounts = setupMeasurementFitter(backendInstance, noiseModel,
+                                                    transpOptLvl=transpOptLvl, nQubits=nQubits,
+                                                    nShots=numOfShots, nRuns=numOfRuns,
+                                                    suppressPrint=suppressPrint)
+    else:
+        filterResultCounts = None
+
     for i, label in enumerate(labels):    #iterate over labels, so we don't run into concurrency issues with the mapping
         print(f"\n---------[Label {i}/{len(labels)}]---------\n")
         temp_waves = list()
