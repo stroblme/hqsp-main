@@ -32,7 +32,7 @@ nQubits=10
 samplingRate=16000    #careful: this may be modified when calling gen_features
 numOfShots=4096
 signalThreshold=0.02
-minRotation=PI/2**(nQubits-2)
+minRotation=PI/2**(nQubits-3)
 nSamplesWindow=1024
 overlapFactor=0.875
 windowLength = 2**nQubits
@@ -50,6 +50,7 @@ scale='mel'
 normalize=True
 nMels=60
 fmin=40.0
+enableQuanv=True
 
 
 def reportSettings():
@@ -148,6 +149,6 @@ def gen_features(labels:list, train_audio_path:str, outputPath:str, PoolSize:int
         return gen_train_from_wave_no_split(all_wave=all_wave, all_label=all_labels)
 
 
-def gen_quantum(x_train, x_valid, kr, output, poolSize=1, quanv=True):
+def gen_quantum(x_train, x_valid, kr, output, poolSize=1):
     #simple pass-through
-    return gen_quanv(x_train, x_valid, kr, output, poolSize, quanv=quanv)
+    return gen_quanv(x_train, x_valid, kr, output, poolSize, quanv=enableQuanv)

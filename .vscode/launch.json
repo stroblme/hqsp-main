@@ -9,6 +9,7 @@
             "type": "python",
             "request": "launch",
             "program": "${workspaceRoot}/viewer.py",
+            "python": "${workspaceRoot}/venv/bin/python",
             "console": "integratedTerminal",
         },
         {
