@@ -67,7 +67,7 @@ if __name__ == '__main__':
     from generateFeatures import gen_features, gen_quantum, reportSettings, samplingRate
     from qcnn.small_qsr import labels
     
-    if args.waveform:
+    if int(args.waveform):
         x_train, x_valid, y_train, y_valid = gen_features(labels, datasetPath, featurePath, PoolSize, waveformPath=waveformPath, portion=portion)
     else:
         print("Loading from disk...")
@@ -85,9 +85,9 @@ if __name__ == '__main__':
     print(f"Generating Quantum Data @{time.time()}")
     print(f"\n\n\n-----------------------\n\n\n")
 
-    if args.quantum==1:
+    if int(args.quantum)==1:
         q_train, q_valid = gen_quantum(x_train, x_valid, kernelSize, output=quantumPath, poolSize=PoolSize)
-    if args.quantum==-1:
+    if int(args.quantum)==-1:
         q_train, q_valid = gen_quantum(x_train, x_valid, kernelSize, output=quantumPath, poolSize=PoolSize, quanv=False)
     else:
         print("Loading from disk...")
