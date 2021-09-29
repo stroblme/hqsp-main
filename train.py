@@ -39,9 +39,9 @@ if __name__ == '__main__':
 
     import argparse
     parser = argparse.ArgumentParser()
-    parser.add_argument("--waveform", default = True, help = "Generate Waveforms")
-    parser.add_argument("--quantum", default=True, help = "Generate Quantum Data")
-    parser.add_argument("--train", default = True, action='store_true', help = "Fit the model")
+    parser.add_argument("--waveform", default = 1, help = "Generate Waveforms")
+    parser.add_argument("--quantum", default= 1, help = "Generate Quantum Data")
+    parser.add_argument("--train", default = 1, action='store_true', help = "Fit the model")
     args = parser.parse_args()
     
 
@@ -67,7 +67,7 @@ if __name__ == '__main__':
     from generateFeatures import gen_features, gen_quantum, reportSettings, samplingRate
     from qcnn.small_qsr import labels
     
-    if int(args.waveform):
+    if args.waveform:
         x_train, x_valid, y_train, y_valid = gen_features(labels, datasetPath, featurePath, PoolSize, waveformPath=waveformPath, portion=portion)
     else:
         print("Loading from disk...")
@@ -85,8 +85,10 @@ if __name__ == '__main__':
     print(f"Generating Quantum Data @{time.time()}")
     print(f"\n\n\n-----------------------\n\n\n")
 
-    if int(args.quantum):
+    if args.quantum==1:
         q_train, q_valid = gen_quantum(x_train, x_valid, kernelSize, output=quantumPath, poolSize=PoolSize)
+    if args.quantum==-1:
+        q_train, q_valid = gen_quantum(x_train, x_valid, kernelSize, output=quantumPath, poolSize=PoolSize, quanv=False)
     else:
         print("Loading from disk...")
         q_train = np.load(f"{quantumPath}/quanv_train.npy")

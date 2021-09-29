@@ -48,6 +48,14 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "Main: Train No Waveforms Disable Quantum",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceRoot}/train.py",
+            "args": ["--waveform=0", "--quantum=-1"],
+            "console": "integratedTerminal"
+        },
+        {
             "name": "Main: Train No Waveforms",
             "type": "python",
             "request": "launch",
