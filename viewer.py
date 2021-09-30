@@ -103,9 +103,9 @@ for filePath in fileList:
 
             plt.tight_layout()
 
-            if q_train.shape[3]!=1:
 
-                q_train=data[export.GENERICDATA]['q_train']
+            q_train=data[export.GENERICDATA]['q_train']
+            if q_train.shape[3]!=1:
                 for i in range(4):
                     img = librosa.display.specshow(librosa.power_to_db(q_train[0,:,:,i], ref=np.min), ax=axs[i])
 
