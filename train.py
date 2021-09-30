@@ -105,8 +105,12 @@ if __name__ == '__main__':
     from fitModel import fit_model
 
     if args.train:
-        # pass quanv data for training and validation
-        model, history = fit_model(q_train, y_train, q_valid, y_valid, checkpointsPath)
+        if q_train.shape[3]==1:
+            # pass quanv data for training and validation
+            model, history = fit_model(q_train, y_train, q_valid, y_valid, checkpointsPath, ablation=True)
+        else:
+            # pass quanv data for training and validation
+            model, history = fit_model(q_train, y_train, q_valid, y_valid, checkpointsPath)
 
         data_ix = time.strftime("%Y%m%d_%H%M")
         model.save(f"{modelsPath}/model_{time.time()}")
