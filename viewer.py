@@ -103,14 +103,16 @@ for filePath in fileList:
 
             plt.tight_layout()
 
-            q_train=data[export.GENERICDATA]['q_train']
-            for i in range(4):
-                img = librosa.display.specshow(librosa.power_to_db(q_train[0,:,:,i], ref=np.min), ax=axs[i])
+            if q_train.shape[3]!=1:
 
-                fig.colorbar(img, ax=axs[i], format='%+2.0f dB')
-                axs[i].set(title=f'Channel {i}')
+                q_train=data[export.GENERICDATA]['q_train']
+                for i in range(4):
+                    img = librosa.display.specshow(librosa.power_to_db(q_train[0,:,:,i], ref=np.min), ax=axs[i])
 
-            savePlot("trainQuantumData")
+                    fig.colorbar(img, ax=axs[i], format='%+2.0f dB')
+                    axs[i].set(title=f'Channel {i}')
+
+                savePlot("trainQuantumData")
 
         elif "model" in filePath:
             print(f"Model:")
