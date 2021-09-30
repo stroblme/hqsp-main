@@ -25,7 +25,7 @@ exportPath = "/storage/mstrobl/versioning"
 
 TOPIC = "PrepGenTrain"
 
-batchSize = 4
+batchSize = 2
 kernelSize = 2
 epochs = 30
 portion = 2
