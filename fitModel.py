@@ -22,10 +22,8 @@ modelsPath = "/ceph/mstrobl/models"
 quantumPath = "/ceph/mstrobl/data_quantum"
 checkpointsPath = "/ceph/mstrobl/checkpoints"
 
-batchSize = 16
-epochs = 30
 
-def fit_model(q_train, y_train, q_valid, y_valid, cpPath, ep=epochs, bS=batchSize, ablation=False):
+def fit_model(q_train, y_train, q_valid, y_valid, cpPath, ep, bS, ablation=False):
     ## For Quanv Exp.
     early_stop = EarlyStopping(monitor='val_loss', mode='min', 
                             verbose=1, patience=10, min_delta=0.0001)
@@ -51,18 +49,18 @@ def fit_model(q_train, y_train, q_valid, y_valid, cpPath, ep=epochs, bS=batchSiz
     )
     return model, history
 
-if __name__ == '__main__':
+# if __name__ == '__main__':
 
-    x_train = np.load(f"{featurePath}/x_train_speech.npy")
-    x_valid = np.load(f"{featurePath}/x_test_speech.npy")
-    y_train = np.load(f"{featurePath}/y_train_speech.npy")
-    y_valid = np.load(f"{featurePath}/y_test_speech.npy")
+#     x_train = np.load(f"{featurePath}/x_train_speech.npy")
+#     x_valid = np.load(f"{featurePath}/x_test_speech.npy")
+#     y_train = np.load(f"{featurePath}/y_train_speech.npy")
+#     y_valid = np.load(f"{featurePath}/y_test_speech.npy")
 
 
-    q_train = np.load(f"{quantumPath}/quanv_train.npy")
-    q_valid = np.load(f"{quantumPath}/quanv_test.npy")
+#     q_train = np.load(f"{quantumPath}/quanv_train.npy")
+#     q_valid = np.load(f"{quantumPath}/quanv_test.npy")
 
-    model = fit_model(q_train, y_train, q_valid, y_valid, checkpointsPath)
+#     model = fit_model(q_train, y_train, q_valid, y_valid, checkpointsPath)
 
-    data_ix = time.strftime("%Y%m%d_%H%M")
-    model.save(f"{modelsPath}/model_{time.time()}")
+#     data_ix = time.strftime("%Y%m%d_%H%M")
+#     model.save(f"{modelsPath}/model_{time.time()}")
