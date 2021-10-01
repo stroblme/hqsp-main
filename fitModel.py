@@ -23,7 +23,7 @@ quantumPath = "/ceph/mstrobl/data_quantum"
 checkpointsPath = "/ceph/mstrobl/checkpoints"
 
 
-def fit_model(q_train, y_train, q_valid, y_valid, cpPath, ep, bS, ablation=False):
+def fit_model(q_train, y_train, q_valid, y_valid, cpPath, epochs, batchSize, ablation=False):
     ## For Quanv Exp.
     early_stop = EarlyStopping(monitor='val_loss', mode='min', 
                             verbose=1, patience=10, min_delta=0.0001)
@@ -42,9 +42,9 @@ def fit_model(q_train, y_train, q_valid, y_valid, cpPath, ep, bS, ablation=False
     history = model.fit(
         x=q_train, 
         y=y_train,
-        epochs=ep, 
+        epochs=epochs, 
         callbacks=[checkpoint], 
-        batch_size=bS, 
+        batch_size=batchSize, 
         validation_data=(q_valid,y_valid)
     )
     return model, history

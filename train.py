@@ -25,24 +25,28 @@ exportPath = "/storage/mstrobl/versioning"
 
 TOPIC = "PrepGenTrain"
 
-batchSize = 2
+batchSize = 4
 kernelSize = 2
 epochs = 30
-portion = 2
+portion = 1
 PoolSize = int(multiprocessing.cpu_count()*0.6) #be gentle..
 # PoolSize = 1 #be gentle..
 
 if __name__ == '__main__':
-    from stqft.frontend import export
-
-    export.checkWorkingTree(exportPath)
 
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument("--waveform", default = 1, help = "Generate Waveforms")
     parser.add_argument("--quantum", default= 1, help = "Generate Quantum Data")
     parser.add_argument("--train", default = 1, action='store_true', help = "Fit the model")
+    parser.add_argument("--checkTree", default = 1, help = "Checks if the working tree is dirty")
     args = parser.parse_args()
+
+
+    from stqft.frontend import export
+
+    if int(args.checkTree) == 1:
+        export.checkWorkingTree(exportPath)
     
 
     print(f"\n\n\n-----------------------\n\n\n")
@@ -107,10 +111,10 @@ if __name__ == '__main__':
     if args.train:
         if q_train.shape[3]==1:
             # pass quanv data for training and validation
-            model, history = fit_model(q_train, y_train, q_valid, y_valid, checkpointsPath, ablation=True)
+            model, history = fit_model(q_train, y_train, q_valid, y_valid, checkpointsPath, epochs=epochs, batchSize=batchSize, ablation=True)
         else:
             # pass quanv data for training and validation
-            model, history = fit_model(q_train, y_train, q_valid, y_valid, checkpointsPath)
+            model, history = fit_model(q_train, y_train, q_valid, y_valid, checkpointsPath, epochs=epochs, batchSize=batchSize, ablation=True)
 
         data_ix = time.strftime("%Y%m%d_%H%M")
         model.save(f"{modelsPath}/model_{time.time()}")
