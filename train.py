@@ -25,10 +25,10 @@ exportPath = "/storage/mstrobl/versioning"
 
 TOPIC = "PrepGenTrain"
 
-batchSize = 4
+batchSize = 16
 kernelSize = 2
 epochs = 30
-portion = 1
+portion = 2
 PoolSize = int(multiprocessing.cpu_count()*0.6) #be gentle..
 # PoolSize = 1 #be gentle..
 
@@ -114,7 +114,7 @@ if __name__ == '__main__':
             model, history = fit_model(q_train, y_train, q_valid, y_valid, checkpointsPath, epochs=epochs, batchSize=batchSize, ablation=True)
         else:
             # pass quanv data for training and validation
-            model, history = fit_model(q_train, y_train, q_valid, y_valid, checkpointsPath, epochs=epochs, batchSize=batchSize, ablation=True)
+            model, history = fit_model(q_train, y_train, q_valid, y_valid, checkpointsPath, epochs=epochs, batchSize=batchSize, ablation=False)
 
         data_ix = time.strftime("%Y%m%d_%H%M")
         model.save(f"{modelsPath}/model_{time.time()}")
