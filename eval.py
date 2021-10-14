@@ -20,7 +20,7 @@ if __name__ == '__main__':
     start = time.time()
 
     _, backendInst = loadBackend(backendName="ibmq_guadalupe", simulation=True)
-    y_hat_stqft_p = gen_mel(audioFile=speechFile, backendInstance=backendInst)
+    y_hat_stqft_p = gen_mel(audioFile=speechFile, backendInstance=None)
 
     maxV=0
     for f in y_hat_stqft_p:
