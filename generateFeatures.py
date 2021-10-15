@@ -37,9 +37,9 @@ nSamplesWindow=1024
 overlapFactor=0.875
 windowLength = 2**nQubits
 windowType='blackman'
-suppressPrint=False
+suppressPrint=True
 useNoiseModel=False
-backend="ibmq_melbourne"
+backend="ibmq_guadalupe"
 noiseMitigationOpt=0
 numOfRuns=1
 simulation=True
@@ -56,7 +56,7 @@ enableQuanv=True
 def reportSettings():
     return f"numOfShots:{numOfShots}; signalFilter:{signalThreshold}; minRotation:{minRotation}; nSamplesWindow:{nSamplesWindow}; overlapFactor:{overlapFactor}; windowType:{windowType}; scale:{scale}; normalize:{normalize}; nMels:{nMels}; fmin:{fmin}"
 
-def gen_mel(audioFile:str, backendInstance=backend, noiseModel=None, filterResultCounts=None):
+def gen_mel(audioFile:str, backendInstance=backend, noiseModel=None, filterResultCounts=None, show=False):
     global backendStorage
 
     print(f"Processing {audioFile}")
@@ -86,6 +86,9 @@ def gen_mel(audioFile:str, backendInstance=backend, noiseModel=None, filterResul
 
     diff = time.time()-start
     print(f"Iteration took {diff} s")
+
+    if show:
+        stqft.show(y_hat_stqft_p, f_p, t_p, title=f"STQFT")
     return y_hat_stqft_p
 
 def poolProcess(labelFileAndBackendInstance:list):
