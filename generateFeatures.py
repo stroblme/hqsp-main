@@ -31,15 +31,15 @@ av = 0
 nQubits=10
 samplingRate=16000    #careful: this may be modified when calling gen_features
 numOfShots=4096
-signalThreshold=0.02
-minRotation=PI/2**(nQubits-4)
+signalThreshold=0.06 #optimized according to thesis
+minRotation=0.2 #PI/2**(nQubits-4)
 nSamplesWindow=1024
 overlapFactor=0.875
 windowLength = 2**nQubits
 windowType='blackman'
 suppressPrint=True
-useNoiseModel=False
-backend="ibmq_guadalupe"
+useNoiseModel=True
+backend="ibmq_guadalupe" #ibmq_guadalupe, ibmq_melbourne (noisier)
 noiseMitigationOpt=0
 numOfRuns=1
 simulation=True
@@ -56,7 +56,7 @@ enableQuanv=True
 def reportSettings():
     return f"numOfShots:{numOfShots}; signalFilter:{signalThreshold}; minRotation:{minRotation}; nSamplesWindow:{nSamplesWindow}; overlapFactor:{overlapFactor}; windowType:{windowType}; scale:{scale}; normalize:{normalize}; nMels:{nMels}; fmin:{fmin}"
 
-def gen_mel(audioFile:str, backendInstance=backend, noiseModel=None, filterResultCounts=None, show=False):
+def gen_mel(audioFile:str, backendInstance=backend, noiseModel=None, filterResultCounts=None, show=False, minRotation=minRotation):
     global backendStorage
 
     print(f"Processing {audioFile}")

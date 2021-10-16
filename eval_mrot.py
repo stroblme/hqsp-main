@@ -2,6 +2,7 @@ import sys
 import time
 from numpy import fmax
 sys.path.append("./stqft")
+from stqft.utils import PI
 sys.path.append("./qcnn")
 
 
@@ -10,41 +11,43 @@ speechFile = '../dataset/left/cb8f8307_nohash_7.wav'
 # speechFile = '/storage/mstrobl/dataset/left/cb8f8307_nohash_7.wav'
 
 if __name__ == '__main__':
-    from stqft.tests import *
+    # from stqft.tests import *
     from stqft.qft import loadBackend, loadNoiseModel, setupMeasurementFitter
     from generateFeatures import gen_mel, gen_quantum, nQubits, transpOptLvl, numOfShots, numOfRuns, suppressPrint, backend, simulation, signalThreshold, useNoiseModel, noiseMitigationOpt
-    from stqft.frontend import frontend
+    from stqft.frontend import frontend, export
+    TOPIC = "speech_sim_n_mrot"
+    export.checkWorkingTree("/media/veracrypt1/QuantumMachineLearningDevelopment/main/stqft/data")
     fri = frontend()
 
     # y_rosa, _ = librosa.load(speechFile, sr = sr)
     # y_rosa_hat = librosa.feature.melspectrogram(y_rosa, sr=sr, n_fft=1024, hop_length=128, power=1.0, n_mels=60, fmin=40.0, fmax=sr/2)
 
-    start = time.time()
-
     assert simulation
     _, backendInst = loadBackend(backendName=backend, simulation=simulation)
     assert useNoiseModel
     _, noiseModel = loadNoiseModel(backendName=backendInst)
-    filterResultCounts = setupMeasurementFitter(backendInst, noiseModel,
-                                                    transpOptLvl=transpOptLvl, nQubits=nQubits,
-                                                    nShots=numOfShots, nRuns=numOfRuns,
-                                                    suppressPrint=suppressPrint)
-
-    # assert not useNoiseModel
-    # y_hat_stqft_p = gen_mel(audioFile=speechFile, backendInstance=None, noiseModel=None, filterResultCounts=None, show=False)
     
-    # assert noiseMitigationOpt==0
-    # y_hat_stqft_p = gen_mel(audioFile=speechFile, backendInstance=backendInst, noiseModel=noiseModel, filterResultCounts=None, show=False)
+    pt=1
+    mrot=PI/2**(nQubits-pt)
+    while mrot < PI/2:
 
-    assert noiseMitigationOpt==1
-    y_hat_stqft_p = gen_mel(audioFile=speechFile, backendInstance=backendInst, noiseModel=noiseModel, filterResultCounts=filterResultCounts, show=False)
+        ylabel = "Frequency (Hz)" if pt == 1 or pt == 5 else " "
+        xlabel = "Time (s)" if pt >= 5 else " "
 
-    maxV=0
-    for f in y_hat_stqft_p:
-        if f.max() > maxV:
-            maxV=f.max()
+        assert noiseMitigationOpt==0
+        y_hat_stqft_p = gen_mel(audioFile=speechFile, backendInstance=backendInst, noiseModel=noiseModel, filterResultCounts=None, show=False, minRotation=mrot)
 
-    print(f"Duration: {time.time()-start}")
+        plotData = fri._show(yData=y_hat_stqft_p, subplot=[2,nQubits/2-1,pt], x1Data=None, sr = sr, title=f'STQFT_sim_n, mr:{mrot:.2f}', ylabel=ylabel, xlabel=xlabel, plotType='librosa', xticks=[0, 1, 2, 3, 4])
+
+
+        exp = export(topic=TOPIC, identifier=f"stqft_sim_n_mr_{mrot:.2f}", dataDir="/media/veracrypt1/QuantumMachineLearningDevelopment/main/stqft/data")
+        exp.setData(export.SIGNAL, y_hat_stqft_p)
+        exp.setData(export.DESCRIPTION, f"stqft, {backend}, chirp, window: 'blackman', length=2**10, mrot:{mrot}")
+        exp.setData(export.PLOTDATA, plotData)
+        exp.doExport()
+
+        pt += 1
+        mrot = PI/2**(nQubits-pt)
 
     # q_train, q_valid = gen_quantum([y_hat_stqft_p], [], 2, output="./", poolSize=1, quanv=True)
 
@@ -62,5 +65,4 @@ if __name__ == '__main__':
     # fri._show(yData=y_rosa_hat, x1Data=None, sr = sr, title='STFT_sim', xlabel='Time (s)', ylabel='Frequency (Hz)', plotType='librosa')
     # fri._show(yData=y_hat_stqft_p, x1Data=None, sr = sr, title=f'STQFT_sim, st:{signalThreshold}', xlabel='Time (s)', ylabel='Frequency (Hz)', plotType='librosa')
     # fri._show(yData=y_hat_stqft_p, x1Data=None, sr = sr, title=f'STQFT_sim_n, st:{signalThreshold}', xlabel='Time (s)', ylabel='Frequency (Hz)', plotType='librosa')
-    fri._show(yData=y_hat_stqft_p, x1Data=None, sr = sr, title=f'STQFT_sim_n_mitig, st:{signalThreshold}', xlabel='Time (s)', ylabel='Frequency (Hz)', plotType='librosa')
     fri.primeTime()

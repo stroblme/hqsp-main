@@ -115,6 +115,14 @@
             "program": "${workspaceRoot}/eval.py",
             "console": "integratedTerminal",
             "justMyCode": false
+        },
+        {
+            "name": "Main: Eval MRot",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceRoot}/eval_mrot.py",
+            "console": "integratedTerminal",
+            "justMyCode": false
         }
     ]
 }
