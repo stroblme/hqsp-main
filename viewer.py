@@ -11,7 +11,9 @@ import librosa
 import librosa.display
 import numpy as np
 import random
+import matplotlib as mpl
 
+from cycler import cycler
 import sys
 sys.path.append("./stqft")
 sys.path.append("./qcnn")
@@ -19,11 +21,23 @@ from stqft.frontend import export, frontend
 from qcnn.small_qsr import labels
 
 def savePlot(name):
-    plt.savefig(f"./{name}.png")
+    plt.savefig(f"./{name}.pdf", format='pdf')
 
-
+SMALL_SIZE = 10
+MEDIUM_SIZE = 12
+BIGGER_SIZE = 14
     
-frontend.setTheme(dark=True)
+frontend.setTheme(dark=False)
+plt.rc('font', size=MEDIUM_SIZE)          # controls default text sizes
+plt.rc('axes', titlesize=BIGGER_SIZE)     # fontsize of the axes title
+plt.rc('axes', labelsize=BIGGER_SIZE)    # fontsize of the x and y labels
+plt.rc('xtick', labelsize=MEDIUM_SIZE)    # fontsize of the tick labels
+plt.rc('ytick', labelsize=MEDIUM_SIZE)    # fontsize of the tick labels
+plt.rc('legend', fontsize=MEDIUM_SIZE)    # legend fontsize
+plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
+
+mpl.rcParams['axes.prop_cycle'] =   (cycler(color=[frontend.MAIN, frontend.HIGHLIGHT, frontend.MAIN, frontend.HIGHLIGHT])+
+                                    cycler(linestyle=['-', '-', '--', '--']))
 
 cdir = "/storage/mstrobl/versioning/"
 ignoreList = ["venv", ".vscode", ".git"]
@@ -55,6 +69,8 @@ else:
 fileList = glob.glob(f"{cdir + selection}/*.p")
 pt = 0
 
+fri = frontend()
+
 for filePath in fileList:
     try:
         data = pickle.load(open(filePath,'rb'))
@@ -66,53 +82,52 @@ for filePath in fileList:
         if "dataset" in filePath:
             print(f"Description of dataset:")
             print(f"{data[export.DESCRIPTION]}")
-        elif "waveformData" in filePath:
-            print(f"Waveforms:")
-            print(f"{data[export.DESCRIPTION]}")
-            print(f"Generating some plots from the random sample in the train set")
+        # elif "waveformData" in filePath:
+        #     print(f"Waveforms:")
+        #     print(f"{data[export.DESCRIPTION]}")
+        #     print(f"Generating some plots from the random sample in the train set")
 
-            fig, axs = plt.subplots(2,5, sharex=True, sharey=True)
-            fig.set_size_inches(24,10)
+        #     fig, axs = plt.subplots(2,5, sharex=True, sharey=True)
+        #     fig.set_size_inches(24,10)
 
-            plt.tight_layout
+        #     plt.tight_layout
 
-            sr = 16000
+        #     sr = 16000
 
-            for it in range(10):
-                row = floor(it/5)
-                col = it - row*5
-                oneHot = data[export.GENERICDATA]["y_train"][random.randint(0,len(data[export.GENERICDATA]["y_train"])-1)]
-                y_idx = np.argmax(oneHot, axis=0)
+        #     nlabels = 10
 
-                y_hat = data[export.GENERICDATA]["x_train"][it]
-                y_hat_rs = np.reshape(y_hat,y_hat.shape[0:2])
-                img = librosa.display.specshow(y_hat_rs, x_axis='time', y_axis='linear', sr=sr, fmax=sr/2, ax=axs[row][col])
+        #     for it in range(10):
+        #         row = floor(it/5)
+        #         col = it - row*5
+        #         oneHot = data[export.GENERICDATA]["y_train"][it*1000]
+        #         y_idx = np.argmax(oneHot, axis=0)
 
-                fig.colorbar(img, ax=axs[row][col], format='%+2.0f dB')
-                axs[row][col].set(title=f'"{labels[y_idx]}"')
+        #         y_hat = data[export.GENERICDATA]["x_train"][it]
+        #         y_hat_rs = np.reshape(y_hat,y_hat.shape[0:2])
+        #         fri._show(yData=y_hat_rs, x1Data=None, sr = sr, title=f'STQFT_sim_n', ylabel="Frequency (Hz)", xlabel="Time (s)", plotType='librosa', xticks=[0, 1, 2, 3, 4])
 
-            savePlot("trainFeatureWaveform")
+        #     savePlot("trainFeatureWaveform")
 
-        elif "quantumData" in filePath:
-            print(f"Quantum Data:")
-            print(f"{data[export.DESCRIPTION]}")
-            print(f"Generating a plot from the first sample in the train set")
+        # elif "quantumData" in filePath:
+        #     print(f"Quantum Data:")
+        #     print(f"{data[export.DESCRIPTION]}")
+        #     print(f"Generating a plot from the first sample in the train set")
 
-            fig, axs = plt.subplots(1,4, sharex=True, sharey=True)
-            fig.set_size_inches(16,9)
+        #     fig, axs = plt.subplots(1,4, sharex=True, sharey=True)
+        #     fig.set_size_inches(16,9)
 
-            plt.tight_layout()
+        #     plt.tight_layout()
 
 
-            q_train=data[export.GENERICDATA]['q_train']
-            if q_train.shape[3]!=1:
-                for i in range(4):
-                    img = librosa.display.specshow(librosa.power_to_db(q_train[0,:,:,i], ref=np.min), ax=axs[i])
+        #     q_train=data[export.GENERICDATA]['q_train']
+        #     if q_train.shape[3]!=1:
+        #         for i in range(4):
+        #             img = librosa.display.specshow(librosa.power_to_db(q_train[0,:,:,i], ref=np.min), ax=axs[i])
 
-                    fig.colorbar(img, ax=axs[i], format='%+2.0f dB')
-                    axs[i].set(title=f'Channel {i}')
+        #             fig.colorbar(img, ax=axs[i], format='%+2.0f dB')
+        #             axs[i].set(title=f'Channel {i}')
 
-                savePlot("trainQuantumData")
+        #         savePlot("trainQuantumData")
 
         elif "model" in filePath:
             print(f"Model:")
@@ -121,7 +136,8 @@ for filePath in fileList:
 
             plt.figure()
             fig = plt.gcf()
-            fig.set_size_inches(16,9)
+            fig.set_size_inches(10,6)
+            plt.tight_layout()
             
             plt.plot(data[export.GENERICDATA]['history_loss'])
             plt.plot(data[export.GENERICDATA]['history_val_loss'])
@@ -129,10 +145,10 @@ for filePath in fileList:
             plt.plot(data[export.GENERICDATA]['history_acc'])
             plt.plot(data[export.GENERICDATA]['history_val_acc'])
 
-            plt.title('model loss')
-            plt.ylabel('loss/acc')
-            plt.xlabel('epoch')
-            plt.legend(['train_loss', 'val_loss', 'train_acc', 'val_acc'], loc='upper left')
+            plt.title('Training / Validation History')
+            plt.ylabel('Loss / Accuracy')
+            plt.xlabel('Epochs')
+            plt.legend(['train_loss', 'val_loss', 'train_acc', 'val_acc'], loc='lower left')
 
             savePlot("trainHistory_val_acc")
 

@@ -34,8 +34,8 @@ def fit_model(q_train, y_train, q_valid, y_valid, cpPath, epochs, batchSize, abl
                                 verbose=1, save_best_only=True, mode='max')
 
 
-    # model = custom_attrnn_Model(q_train[0], labels, ablation=ablation)
-    model = attrnn_Model(q_train[0], labels, ablation=ablation)
+    model = custom_attrnn_Model(q_train[0], labels, ablation=ablation)
+    # model = attrnn_Model(q_train[0], labels, ablation=ablation)
 
     model.summary()
 
