@@ -25,10 +25,10 @@ exportPath = "/storage/mstrobl/versioning"
 
 TOPIC = "PrepGenTrain"
 
-batchSize = 16
+batchSize = 28
 kernelSize = 2
 epochs = 30
-portion = 2
+portion = 1
 PoolSize = int(multiprocessing.cpu_count()*0.6) #be gentle..
 # PoolSize = 1 #be gentle..
 
@@ -71,7 +71,7 @@ if __name__ == '__main__':
     from generateFeatures import gen_features, gen_quantum, reportSettings, samplingRate
     from qcnn.small_qsr import labels
     
-    if int(args.waveform):
+    if int(args.waveform)==1:
         x_train, x_valid, y_train, y_valid = gen_features(labels, datasetPath, featurePath, PoolSize, waveformPath=waveformPath, portion=portion)
     else:
         print("Loading from disk...")
@@ -89,10 +89,17 @@ if __name__ == '__main__':
     print(f"Generating Quantum Data @{time.time()}")
     print(f"\n\n\n-----------------------\n\n\n")
 
-    if int(args.quantum)==1:
+    # disable quanv and pix chan mal
+    if int(args.quantum)==-2:
+        q_train = x_train
+        q_valid = x_valid
+    # enable quanv
+    elif int(args.quantum)==1:
         q_train, q_valid = gen_quantum(x_train, x_valid, kernelSize, output=quantumPath, poolSize=PoolSize)
-    if int(args.quantum)==-1:
+    # pix chan map
+    elif int(args.quantum)==-1:
         q_train, q_valid = gen_quantum(x_train, x_valid, kernelSize, output=quantumPath, poolSize=PoolSize, quanv=False)
+    # load from disk
     else:
         print("Loading from disk...")
         q_train = np.load(f"{quantumPath}/quanv_train.npy")
@@ -109,7 +116,9 @@ if __name__ == '__main__':
     from fitModel import fit_model
 
     if args.train:
-        if q_train.shape[3]==1:
+        #if quanv completely disabled and no pix channel map
+        if int(args.quantum)==-2 or q_train.shape[3]==1:
+            print("using ablation")
             # pass quanv data for training and validation
             model, history = fit_model(q_train, y_train, q_valid, y_valid, checkpointsPath, epochs=epochs, batchSize=batchSize, ablation=True)
         else:
