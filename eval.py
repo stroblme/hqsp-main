@@ -23,18 +23,19 @@ if __name__ == '__main__':
 
     assert simulation
     _, backendInst = loadBackend(backendName=backend, simulation=simulation)
-    assert useNoiseModel
-    _, noiseModel = loadNoiseModel(backendName=backendInst)
-    filterResultCounts = setupMeasurementFitter(backendInst, noiseModel,
-                                                    transpOptLvl=transpOptLvl, nQubits=nQubits,
-                                                    nShots=numOfShots, nRuns=numOfRuns,
-                                                    suppressPrint=suppressPrint)
+    if useNoiseModel:
+        _, noiseModel = loadNoiseModel(backendName=backendInst)
 
-    # assert not useNoiseModel
-    # y_hat_stqft_p = gen_mel(audioFile=speechFile, backendInstance=None, noiseModel=None, filterResultCounts=None, show=False)
-    
-    # assert noiseMitigationOpt==0
-    # y_hat_stqft_p = gen_mel(audioFile=speechFile, backendInstance=backendInst, noiseModel=noiseModel, filterResultCounts=None, show=False)
+    #     y_hat_stqft_p = gen_mel(audioFile=speechFile, backendInstance=None, noiseModel=None, filterResultCounts=None, show=False)
+
+    if noiseMitigationOpt==1:
+        filterResultCounts = setupMeasurementFitter(backendInst, noiseModel,
+                                                        transpOptLvl=transpOptLvl, nQubits=nQubits,
+                                                        nShots=numOfShots, nRuns=numOfRuns,
+                                                        suppressPrint=suppressPrint)
+
+    #     y_hat_stqft_p = gen_mel(audioFile=speechFile, backendInstance=backendInst, noiseModel=noiseModel, filterResultCounts=None, show=False)
+
 
     assert noiseMitigationOpt==1
     y_hat_stqft_p = gen_mel(audioFile=speechFile, backendInstance=backendInst, noiseModel=noiseModel, filterResultCounts=filterResultCounts, show=False)
