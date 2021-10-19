@@ -33,7 +33,6 @@ samplingRate=16000    #careful: this may be modified when calling gen_features
 numOfShots=4096
 signalThreshold=0.06 #optimized according to thesis
 minRotation=0.2 #PI/2**(nQubits-4)
-nSamplesWindow=1024
 overlapFactor=0.875
 windowLength = 2**nQubits
 windowType='blackman'
@@ -77,7 +76,7 @@ def gen_mel(audioFile:str, backendInstance=backend, noiseModel=None, filterResul
 
     # STQFT init
     y_hat_stqft, f, t = stqft.forward(y, 
-                            nSamplesWindow=nSamplesWindow,
+                            nSamplesWindow=windowLength,
                             overlapFactor=overlapFactor,
                             windowType=windowType,
                             suppressPrint=suppressPrint)
