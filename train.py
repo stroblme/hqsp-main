@@ -27,7 +27,7 @@ TOPIC = "PrepGenTrain"
 
 batchSize = 28
 kernelSize = 2
-epochs = 30
+epochs = 40
 portion = 1
 PoolSize = int(multiprocessing.cpu_count()*0.6) #be gentle..
 # PoolSize = 1 #be gentle..
