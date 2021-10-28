@@ -148,7 +148,7 @@ for filePath in fileList:
             plt.title('Training / Validation History')
             plt.ylabel('Loss / Accuracy')
             plt.xlabel('Epochs')
-            plt.legend(['train_loss', 'val_loss', 'train_acc', 'val_acc'], loc='lower left')
+            plt.legend(['train_loss', 'val_loss', 'train_acc', 'val_acc'], loc='upper right')
 
             savePlot("trainHistory_val_acc")
 
