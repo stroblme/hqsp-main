@@ -49,6 +49,16 @@ def fit_model(q_train, y_train, q_valid, y_valid, cpPath, epochs, batchSize, abl
     )
     return model, history
 
+def get_model(path):
+    return tf.keras.models.load_model(path)
+
+def evaluate_model(q_test, y_test, path, epochs, batchSize):
+    print(f"Loading model from {path}")
+    model = get_model(path)
+
+    result = model.evaluate(q_test, y_test, batch_size=batchSize)
+    return result
+
 # if __name__ == '__main__':
 
 #     x_train = np.load(f"{featurePath}/x_train_speech.npy")

@@ -83,6 +83,15 @@
             "type": "python",
             "request": "launch",
             "program": "${workspaceRoot}/test.py",
+            "args": ["--waveform=1", "--quantum=-1"],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Main: Test No Wave",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceRoot}/test.py",
+            "args": ["--waveform=0", "--quantum=0"],
             "console": "integratedTerminal"
         },
         {

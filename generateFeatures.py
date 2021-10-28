@@ -151,7 +151,7 @@ def gen_features(labels:list, train_audio_path:str, outputPath:str, PoolSize:int
     if split:
         return gen_train_from_wave(all_wave=all_wave, all_label=all_labels, output=outputPath)
     else:
-        return gen_train_from_wave_no_split(all_wave=all_wave, all_label=all_labels)
+        return gen_train_from_wave_no_split(all_wave=all_wave, all_label=all_labels, output=outputPath)
 
 
 def gen_quantum(x_train, x_valid, kr, output, poolSize=1, quanv=enableQuanv):
