@@ -55,7 +55,7 @@ enableQuanv=True
 def reportSettings():
     return f"numOfShots:{numOfShots}; signalFilter:{signalThreshold}; minRotation:{minRotation}; nSamplesWindow:{windowLength}; overlapFactor:{overlapFactor}; windowType:{windowType}; scale:{scale}; normalize:{normalize}; nMels:{nMels}; fmin:{fmin}"
 
-def gen_mel(audioFile:str, backendInstance=backend, noiseModel=None, filterResultCounts=None, show=False, minRotation=minRotation):
+def gen_mel(audioFile:str, backendInstance=backend, noiseModel=None, filterResultCounts=None, show=False, minRotation=minRotation,signalThreshold=signalThreshold,noiseMitigationOpt=noiseMitigationOpt):
     global backendStorage
 
     print(f"Processing {audioFile}")
