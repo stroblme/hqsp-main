@@ -14,6 +14,7 @@ if __name__ == '__main__':
     # from stqft.tests import *
     from stqft.qft import loadBackend, loadNoiseModel, setupMeasurementFitter
     # from generateFeatures import gen_mel, gen_quantum, nQubits, transpOptLvl, numOfShots, numOfRuns, suppressPrint, backend, simulation, signalThreshold, useNoiseModel, noiseMitigationOpt
+    from generateFeatures import gen_mel
     from stqft.frontend import frontend, export
     nQubits=10
     samplingRate=16000    #careful: this may be modified when calling gen_features
@@ -26,7 +27,7 @@ if __name__ == '__main__':
     suppressPrint=True
     useNoiseModel=True
     backend="ibmq_guadalupe" #ibmq_guadalupe, ibmq_melbourne (noisier)
-    noiseMitigationOpt=1
+    noiseMitigationOpt=0
     numOfRuns=1
     simulation=True
     transpileOnce=True
@@ -52,15 +53,15 @@ if __name__ == '__main__':
     
     pt=1
     mrot=PI/2**(nQubits-pt)
-    while mrot < PI/2:
+    while mrot <= PI/2:
 
-        ylabel = "Frequency (Hz)" if pt == 1 or pt == 5 else " "
-        xlabel = "Time (s)" if pt >= 5 else " "
+        ylabel = "Frequency (Hz)" if pt == 1 or pt == 4 or pt == 7 else " "
+        xlabel = "Time (s)" if pt >= 7 else " "
 
         assert noiseMitigationOpt==0
-        y_hat_stqft_p = gen_mel(audioFile=speechFile, backendInstance=backendInst, noiseModel=noiseModel, filterResultCounts=None, show=False, minRotation=mrot)
+        y_hat_stqft_p = gen_mel(audioFile=speechFile, backendInstance=backendInst, noiseModel=noiseModel, filterResultCounts=None, show=False, minRotation=mrot,signalThreshold=signalThreshold,noiseMitigationOpt=noiseMitigationOpt)
 
-        plotData = fri._show(yData=y_hat_stqft_p, subplot=[2,nQubits/2-1,pt], x1Data=None, sr = sr, title=f'STQFT_sim_n, mr:{mrot:.2f}', ylabel=ylabel, xlabel=xlabel, plotType='librosa', xticks=[0, 1, 2, 3, 4])
+        plotData = fri._show(yData=y_hat_stqft_p, subplot=[3,nQubits/2-2,pt], x1Data=None, sr = sr, title=f'STQFT_sim_n, mr:{mrot:.3f}', ylabel=ylabel, xlabel=xlabel, plotType='librosa', xticks=[0, 1, 2, 3, 4])
 
 
         exp = export(topic=TOPIC, identifier=f"stqft_sim_n_mr_{mrot:.2f}", dataDir="/media/veracrypt1/QuantumMachineLearningDevelopment/main/stqft/data")
