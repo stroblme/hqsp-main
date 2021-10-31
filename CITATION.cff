@@ -1,0 +1,13 @@
+# YAML 1.2
+---
+authors: 
+  -
+    affiliation: "KIT - Karlsruhe Institute of Technology"
+    family-names: Strobl
+    given-names: Melvin
+cff-version: "1.1.0"
+date-released: 2021-11-02
+message: "If you use this software, please cite it using these metadata."
+repository-code: "https://github.com/stroblme/hqsp-main"
+title: "Hybrid Quantum Speech Processing - Main Repository"
+...
