@@ -7,6 +7,7 @@ authors:
     given-names: Melvin
 cff-version: "1.1.0"
 date-released: 2021-11-02
+license: MIT
 message: "If you use this software, please cite it using these metadata."
 repository-code: "https://github.com/stroblme/hqsp-main"
 title: "Hybrid Quantum Speech Processing - Main Repository"
