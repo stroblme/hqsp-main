@@ -82,52 +82,52 @@ for filePath in fileList:
         if "dataset" in filePath:
             print(f"Description of dataset:")
             print(f"{data[export.DESCRIPTION]}")
-        # elif "waveformData" in filePath:
-        #     print(f"Waveforms:")
-        #     print(f"{data[export.DESCRIPTION]}")
-        #     print(f"Generating some plots from the random sample in the train set")
+        elif "waveformData" in filePath:
+            print(f"Waveforms:")
+            print(f"{data[export.DESCRIPTION]}")
+            print(f"Generating some plots from the random sample in the train set")
 
-        #     fig, axs = plt.subplots(2,5, sharex=True, sharey=True)
-        #     fig.set_size_inches(24,10)
+            fig, axs = plt.subplots(2,5, sharex=True, sharey=True)
+            fig.set_size_inches(24,10)
 
-        #     plt.tight_layout
+            plt.tight_layout
 
-        #     sr = 16000
+            sr = 16000
 
-        #     nlabels = 10
+            nlabels = 10
 
-        #     for it in range(10):
-        #         row = floor(it/5)
-        #         col = it - row*5
-        #         oneHot = data[export.GENERICDATA]["y_train"][it*1000]
-        #         y_idx = np.argmax(oneHot, axis=0)
+            for it in range(10):
+                row = floor(it/5)
+                col = it - row*5
+                oneHot = data[export.GENERICDATA]["y_train"][it*1000]
+                y_idx = np.argmax(oneHot, axis=0)
 
-        #         y_hat = data[export.GENERICDATA]["x_train"][it]
-        #         y_hat_rs = np.reshape(y_hat,y_hat.shape[0:2])
-        #         fri._show(yData=y_hat_rs, x1Data=None, sr = sr, title=f'STQFT_sim_n', ylabel="Frequency (Hz)", xlabel="Time (s)", plotType='librosa', xticks=[0, 1, 2, 3, 4])
+                y_hat = data[export.GENERICDATA]["x_train"][it]
+                y_hat_rs = np.reshape(y_hat,y_hat.shape[0:2])
+                fri._show(yData=y_hat_rs, x1Data=None, sr = sr, title=f'STQFT_sim_n', ylabel="Frequency (Hz)", xlabel="Time (s)", plotType='librosa', xticks=[0, 1, 2, 3, 4])
 
-        #     savePlot("trainFeatureWaveform")
+            savePlot("trainFeatureWaveform")
 
-        # elif "quantumData" in filePath:
-        #     print(f"Quantum Data:")
-        #     print(f"{data[export.DESCRIPTION]}")
-        #     print(f"Generating a plot from the first sample in the train set")
+        elif "quantumData" in filePath:
+            print(f"Quantum Data:")
+            print(f"{data[export.DESCRIPTION]}")
+            print(f"Generating a plot from the first sample in the train set")
 
-        #     fig, axs = plt.subplots(1,4, sharex=True, sharey=True)
-        #     fig.set_size_inches(16,9)
+            fig, axs = plt.subplots(1,4, sharex=True, sharey=True)
+            fig.set_size_inches(16,9)
 
-        #     plt.tight_layout()
+            plt.tight_layout()
 
 
-        #     q_train=data[export.GENERICDATA]['q_train']
-        #     if q_train.shape[3]!=1:
-        #         for i in range(4):
-        #             img = librosa.display.specshow(librosa.power_to_db(q_train[0,:,:,i], ref=np.min), ax=axs[i])
+            q_train=data[export.GENERICDATA]['q_train']
+            if q_train.shape[3]!=1:
+                for i in range(4):
+                    img = librosa.display.specshow(librosa.power_to_db(q_train[0,:,:,i], ref=np.min), ax=axs[i])
 
-        #             fig.colorbar(img, ax=axs[i], format='%+2.0f dB')
-        #             axs[i].set(title=f'Channel {i}')
+                    fig.colorbar(img, ax=axs[i], format='%+2.0f dB')
+                    axs[i].set(title=f'Channel {i}')
 
-        #         savePlot("trainQuantumData")
+                savePlot("trainQuantumData")
 
         elif "model" in filePath:
             print(f"Model:")
