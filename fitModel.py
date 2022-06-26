@@ -14,7 +14,7 @@ from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
 
 from qcnn.small_qsr import labels
-from qcnn.models import attrnn_Model, custom_attrnn_Model
+from qcnn.models import attrnn_Model, custom_attrnn_Model, vqft_attrnn_model
 
 datasetPath = "/ceph/mstrobl/dataset"
 featurePath = "/ceph/mstrobl/features"
@@ -23,7 +23,7 @@ quantumPath = "/ceph/mstrobl/data_quantum"
 checkpointsPath = "/ceph/mstrobl/checkpoints"
 
 
-def fit_model(q_train, y_train, q_valid, y_valid, cpPath, epochs, batchSize, ablation=False):
+def fit_model(q_train, y_train, q_valid, y_valid, cpPath, epochs, batchSize, gen_callback=None, ablation=False):
     ## For Quanv Exp.
     early_stop = EarlyStopping(monitor='val_loss', mode='min', 
                             verbose=1, patience=10, min_delta=0.0001)
@@ -33,8 +33,7 @@ def fit_model(q_train, y_train, q_valid, y_valid, cpPath, epochs, batchSize, abl
     checkpoint = ModelCheckpoint(cpPath, monitor=metric, 
                                 verbose=1, save_best_only=True, mode='max')
 
-
-    model = custom_attrnn_Model(q_train[0], labels, ablation=ablation)
+    model = vqft_attrnn_model(q_train[0], labels, quantum_callback=gen_callback, ablation=ablation)
     # model = attrnn_Model(q_train[0], labels, ablation=ablation)
 
     model.summary()
