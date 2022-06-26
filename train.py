@@ -68,10 +68,12 @@ if __name__ == '__main__':
     print(f"\n\n\n-----------------------\n\n\n")
     print(f"Generating Waveforms @{time.time()}")
     print(f"\n\n\n-----------------------\n\n\n")
-    from generateFeatures import gen_features, gen_quantum, reportSettings, samplingRate
+    from generateFeatures import gen_callback, gen_wave_features, gen_features, gen_quantum, reportSettings, samplingRate
     from qcnn.small_qsr import labels
     
-    if int(args.waveform)==1:
+    if int(args.waveform)==-1:
+        x_train, x_valid, y_train, y_valid = gen_wave_features(labels, datasetPath, featurePath, PoolSize, waveformPath=waveformPath, portion=portion)
+    elif int(args.waveform)==1:
         x_train, x_valid, y_train, y_valid = gen_features(labels, datasetPath, featurePath, PoolSize, waveformPath=waveformPath, portion=portion)
     else:
         print("Loading from disk...")
@@ -117,7 +119,10 @@ if __name__ == '__main__':
 
     if args.train:
         #if quanv completely disabled and no pix channel map
-        if int(args.quantum)==-2 or q_train.shape[3]==1:
+        if int(args.quantum)==-2 and int(args.waveform)==-2:
+            model, history = fit_model(q_train, y_train, q_valid, y_valid, checkpointsPath, epochs=epochs, batchSize=batchSize, ablation=True)
+
+        elif int(args.quantum)==-2 or q_train.shape[3]==1:
             print("using ablation")
             # pass quanv data for training and validation
             model, history = fit_model(q_train, y_train, q_valid, y_valid, checkpointsPath, epochs=epochs, batchSize=batchSize, ablation=True)
