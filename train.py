@@ -120,7 +120,7 @@ if __name__ == '__main__':
     if args.train:
         #if quanv completely disabled and no pix channel map
         if int(args.quantum)==-2 and int(args.waveform)==-2:
-            model, history = fit_model(q_train, y_train, q_valid, y_valid, checkpointsPath, epochs=epochs, batchSize=batchSize, ablation=True)
+            model, history = fit_model(q_train, y_train, q_valid, y_valid, checkpointsPath, gen_callback=gen_callback, epochs=epochs, batchSize=batchSize, ablation=True)
 
         elif int(args.quantum)==-2 or q_train.shape[3]==1:
             print("using ablation")

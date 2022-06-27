@@ -41,6 +41,7 @@ def fit_model(q_train, y_train, q_valid, y_valid, cpPath, epochs, batchSize, gen
     history = model.fit(
         x=q_train, 
         y=y_train,
+        quantum_callback=gen_callback,
         epochs=epochs, 
         callbacks=[checkpoint], 
         batch_size=batchSize, 
