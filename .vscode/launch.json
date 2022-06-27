@@ -48,6 +48,22 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "Main: Train Gen Raw Waveforms Learnable QFT",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceRoot}/train.py",
+            "args": ["--waveform=-1", "--quantum=-3"],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Main: Train No Waveforms Learnable QFT",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceRoot}/train.py",
+            "args": ["--waveform=0", "--quantum=-3", "--checkTree=0"],
+            "console": "integratedTerminal"
+        },
+        {
             "name": "Main: Train No Waveforms Disable Quantum",
             "type": "python",
             "request": "launch",
