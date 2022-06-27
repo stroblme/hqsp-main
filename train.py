@@ -77,10 +77,10 @@ if __name__ == '__main__':
         x_train, x_valid, y_train, y_valid = gen_features(labels, datasetPath, featurePath, PoolSize, waveformPath=waveformPath, portion=portion)
     else:
         print("Loading from disk...")
-        x_train = np.load(f"{featurePath}/x_train_speech.npy")
-        x_valid = np.load(f"{featurePath}/x_valid_speech.npy")
-        y_train = np.load(f"{featurePath}/y_train_speech.npy")
-        y_valid = np.load(f"{featurePath}/y_valid_speech.npy")
+        x_train = np.load(f"{featurePath}/x_train_speech.npy", allow_pickle=True)   # allow pickle for use with signal type object
+        x_valid = np.load(f"{featurePath}/x_valid_speech.npy", allow_pickle=True)
+        y_train = np.load(f"{featurePath}/y_train_speech.npy", allow_pickle=True)
+        y_valid = np.load(f"{featurePath}/y_valid_speech.npy", allow_pickle=True)
 
     exp = export(topic=TOPIC, identifier="waveformData", dataDir=exportPath)
     exp.setData(export.DESCRIPTION, f"Waveforms generated (T)/ loaded (F): {args.waveform}; Labels used: {labels}; FeaturePath: {featurePath}; PoolSize: {PoolSize}; WaveformPath: {waveformPath}; Portioning: {portion}, SamplingRate: {samplingRate}, {reportSettings()}")
@@ -92,7 +92,7 @@ if __name__ == '__main__':
     print(f"\n\n\n-----------------------\n\n\n")
 
     # disable quanv and pix chan mal
-    if int(args.quantum)==-2:
+    if int(args.quantum)<=-2:
         q_train = x_train
         q_valid = x_valid
     # enable quanv
@@ -119,7 +119,7 @@ if __name__ == '__main__':
 
     if args.train:
         #if quanv completely disabled and no pix channel map
-        if int(args.quantum)==-2 and int(args.waveform)==-2:
+        if int(args.quantum)==-3:
             model, history = fit_model(q_train, y_train, q_valid, y_valid, checkpointsPath, gen_callback=gen_callback, epochs=epochs, batchSize=batchSize, ablation=True)
 
         elif int(args.quantum)==-2 or q_train.shape[3]==1:
