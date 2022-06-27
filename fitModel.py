@@ -14,7 +14,7 @@ from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
 
 from qcnn.small_qsr import labels
-from qcnn.models import attrnn_Model, custom_attrnn_Model, vqft_attrnn_model
+from qcnn.models import attrnn_Model, vqft_attrnn_model
 
 datasetPath = "/ceph/mstrobl/dataset"
 featurePath = "/ceph/mstrobl/features"
