@@ -51,8 +51,27 @@ nMels=60
 fmin=40.0
 enableQuanv=True
 
-def gen_callback(inputs):
-    pass
+def gen_callback(weights, biases, inputs, backendInstance=backend, noiseModel=None, filterResultCounts=None, show=False, minRotation=minRotation,signalThreshold=signalThreshold,noiseMitigationOpt=noiseMitigationOpt):
+    # QFT init
+    stqft = transform(stqft_framework, 
+                        numOfShots=numOfShots, 
+                        minRotation=minRotation, signalThreshold=signalThreshold, fixZeroSignal=fixZeroSignal,
+                        suppressPrint=suppressPrint, draw=False,
+                        simulation=simulation,
+                        noiseMitigationOpt=noiseMitigationOpt, filterResultCounts=filterResultCounts,
+                        useNoiseModel=useNoiseModel, noiseModel=noiseModel, backend=backendInstance, 
+                        transpileOnce=transpileOnce, transpOptLvl=transpOptLvl)
+
+    # STQFT init
+    y_hat_stqft, f, t = stqft.forward(inputs, (weights, biases), 
+                            nSamplesWindow=windowLength,
+                            overlapFactor=overlapFactor,
+                            windowType=windowType,
+                            suppressPrint=suppressPrint)
+    # Frontend Post Processing
+    y_hat_stqft_p, f_p, t_p = stqft.postProcess(y_hat_stqft, f ,t, scale=scale, normalize=normalize, samplingRate=y.samplingRate, nMels=nMels, fmin=fmin, fmax=y.samplingRate/2)
+
+    return y_hat_stqft_p
 
 def reportSettings():
     return f"numOfShots:{numOfShots}; signalFilter:{signalThreshold}; minRotation:{minRotation}; nSamplesWindow:{windowLength}; overlapFactor:{overlapFactor}; windowType:{windowType}; scale:{scale}; normalize:{normalize}; nMels:{nMels}; fmin:{fmin}"
