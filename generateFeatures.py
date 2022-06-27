@@ -39,7 +39,7 @@ windowType='blackman'
 suppressPrint=True
 useNoiseModel=True
 backend="ibmq_guadalupe" #ibmq_guadalupe, ibmq_melbourne (noisier)
-noiseMitigationOpt=1
+noiseMitigationOpt=1 # set to 1 to enable noise subtraction approach
 numOfRuns=1
 simulation=True
 transpileOnce=True
@@ -51,7 +51,7 @@ nMels=60
 fmin=40.0
 enableQuanv=True
 
-def gen_callback(weights, biases, inputs, backendInstance=backend, noiseModel=None, filterResultCounts=None, show=False, minRotation=minRotation,signalThreshold=signalThreshold,noiseMitigationOpt=noiseMitigationOpt):
+def gen_callback(weights, biases, x, backendInstance=backend, noiseModel=None, filterResultCounts=None, show=False, minRotation=minRotation,signalThreshold=signalThreshold,noiseMitigationOpt=noiseMitigationOpt):
     # QFT init
     stqft = transform(stqft_framework, 
                         numOfShots=numOfShots, 
@@ -60,16 +60,17 @@ def gen_callback(weights, biases, inputs, backendInstance=backend, noiseModel=No
                         simulation=simulation,
                         noiseMitigationOpt=noiseMitigationOpt, filterResultCounts=filterResultCounts,
                         useNoiseModel=useNoiseModel, noiseModel=noiseModel, backend=backendInstance, 
-                        transpileOnce=transpileOnce, transpOptLvl=transpOptLvl)
+                        parameters=(weights, biases), # TODO: need to find a clever way to integrate parameters for batches
+                        transpileOnce=False, transpOptLvl=transpOptLvl)
 
     # STQFT init
-    y_hat_stqft, f, t = stqft.forward(inputs, (weights, biases), 
+    y_hat_stqft, f, t = stqft.forward(x, 
                             nSamplesWindow=windowLength,
                             overlapFactor=overlapFactor,
                             windowType=windowType,
                             suppressPrint=suppressPrint)
     # Frontend Post Processing
-    y_hat_stqft_p, f_p, t_p = stqft.postProcess(y_hat_stqft, f ,t, scale=scale, normalize=normalize, samplingRate=y.samplingRate, nMels=nMels, fmin=fmin, fmax=y.samplingRate/2)
+    y_hat_stqft_p, f_p, t_p = stqft.postProcess(y_hat_stqft, f ,t, scale=scale, normalize=normalize, samplingRate=x.samplingRate, nMels=nMels, fmin=fmin, fmax=x.samplingRate/2)
 
     return y_hat_stqft_p
 
@@ -116,7 +117,7 @@ def gen_wave(audioFile:str):
 
     y = signal(samplingRate=samplingRate, signalType='file', path=audioFile)
     
-    return y.y
+    return y
 
 def poolProcess_wave(portDatsetLabelFiles):
 
@@ -143,7 +144,7 @@ def gen_wave_features(labels:list, train_audio_path:str, outputPath:str, PoolSiz
         print(f"\nUsing {len(portDatsetLabelFiles)} out of {len(datasetLabelFiles)} files for label '{label}'\n")
 
         with Pool(PoolSize) as p:
-            temp_waves = p.map(poolProcess, portDatsetLabelFiles)   #mapping samples to processes and output back to waveform array
+            temp_waves = p.map(poolProcess_wave, portDatsetLabelFiles)   #mapping samples to processes and output back to waveform array
         # ^ (validated) ^ When running "single threaded" in the multiprocessing.dummy module with PoolSize=1
             # ^ (validated) ^ When running in standard multiprocessing module with PoolSize=3
 
