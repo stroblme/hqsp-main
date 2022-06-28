@@ -14,7 +14,8 @@ import numpy as np
 
 
 datasetPath = "/storage/mstrobl/dataset"
-featurePath = "/storage/mstrobl/features"
+featurePath = "/storage/mstrobl/features_raw"
+# featurePath = "/storage/mstrobl/features"
 checkpointsPath = "/storage/mstrobl/checkpoints"
 modelsPath = "/storage/mstrobl/models"
 quantumPath = "/storage/mstrobl/dataQuantum"
@@ -28,7 +29,7 @@ TOPIC = "PrepGenTrain"
 batchSize = 28
 kernelSize = 2
 epochs = 40
-portion = 1
+portion = 211
 PoolSize = int(multiprocessing.cpu_count()*0.6) #be gentle..
 # PoolSize = 1 #be gentle..
 
