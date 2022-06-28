@@ -14,7 +14,9 @@ from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
 
 from qcnn.small_qsr import labels
-from qcnn.models import attrnn_Model, vqft_attrnn_model
+from qcnn.models import vqft_attrnn_model
+
+from generateFeatures import nQubits
 
 datasetPath = "/ceph/mstrobl/dataset"
 featurePath = "/ceph/mstrobl/features"
@@ -34,7 +36,7 @@ def fit_model(q_train, y_train, q_valid, y_valid, cpPath, epochs, batchSize, gen
                                 verbose=1, save_best_only=True, mode='max')
 
     # run model with one sample to check if everything is good
-    model = vqft_attrnn_model(q_train[0], labels, quantum_callback=gen_callback, ablation=ablation)
+    model = vqft_attrnn_model(q_train[0], labels, nQubits=nQubits, quantum_callback=gen_callback, ablation=ablation)
     # model = attrnn_Model(q_train[0], labels, ablation=ablation)
 
     model.summary()
