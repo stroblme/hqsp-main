@@ -33,6 +33,7 @@ def fit_model(q_train, y_train, q_valid, y_valid, cpPath, epochs, batchSize, gen
     checkpoint = ModelCheckpoint(cpPath, monitor=metric, 
                                 verbose=1, save_best_only=True, mode='max')
 
+    # run model with one sample to check if everything is good
     model = vqft_attrnn_model(q_train[0], labels, quantum_callback=gen_callback, ablation=ablation)
     # model = attrnn_Model(q_train[0], labels, ablation=ablation)
 
@@ -41,7 +42,6 @@ def fit_model(q_train, y_train, q_valid, y_valid, cpPath, epochs, batchSize, gen
     history = model.fit(
         x=q_train, 
         y=y_train,
-        quantum_callback=gen_callback,
         epochs=epochs, 
         callbacks=[checkpoint], 
         batch_size=batchSize, 
