@@ -63,6 +63,11 @@ def gen_callback(weights, biases, x, backendInstance=backend, noiseModel=None, f
                         parameters=(weights, biases), # TODO: need to find a clever way to integrate parameters for batches
                         transpileOnce=False, transpOptLvl=transpOptLvl)
 
+    if type(x) != signal:
+        x_s = signal(nSamples=len(x), samplingRate=samplingRate, duration=1)
+        x_s.externalSample(x, x_s.t)
+        x = x_s
+
     # STQFT init
     y_hat_stqft, f, t = stqft.forward(x, 
                             nSamplesWindow=windowLength,
@@ -116,8 +121,7 @@ def gen_wave(audioFile:str):
     print(f"Processing {audioFile}")
 
     y = signal(samplingRate=samplingRate, signalType='file', path=audioFile)
-    
-    return y
+    return y.y
 
 def poolProcess_wave(portDatsetLabelFiles):
 
