@@ -6,7 +6,7 @@ This is the root directory of the *hqsp* project
 ## Roadmap
 
 - [x] Modify training for an end-to-end pipeline (generating data is now part of the learning process)
-- [ ] Adapt qft circuit so that it contains learnable parameters
+- [x] Adapt qft circuit so that it contains learnable parameters
 - [ ] Integrate entangling dropout?
 - [ ] Conduct a few experiments
 
