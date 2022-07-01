@@ -7,6 +7,7 @@ This is the root directory of the *hqsp* project
 
 - [x] Modify training for an end-to-end pipeline (generating data is now part of the learning process)
 - [x] Adapt qft circuit so that it contains learnable parameters
+- [ ] implement gradients for qft
 - [ ] Integrate entangling dropout?
 - [ ] Conduct a few experiments
 
