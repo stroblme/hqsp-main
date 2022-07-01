@@ -35,15 +35,8 @@ def fit_model(q_train, y_train, q_valid, y_valid, cpPath, epochs, batchSize, gen
     checkpoint = ModelCheckpoint(cpPath, monitor=metric, 
                                 verbose=1, save_best_only=True, mode='max')
 
-    os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
-    
-    # tf.debugging.set_log_device_placement(True)
-    # gpus = tf.config.list_logical_devices('GPU')
-    # strategy = tf.distribute.MirroredStrategy(gpus)
-    # with strategy.scope():
-
     # run model with one sample to check if everything is good
-    model = vqft_attrnn_model(q_train[0], labels, nQubits=nQubits, quantum_callback=gen_callback, ablation=ablation)
+    model = vqft_attrnn_model(q_train[0], labels, nQubits=nQubits, qinit_callback=init_callback, qgen_callback=gen_callback, ablation=ablation)
     # model = attrnn_Model(q_train[0], labels, ablation=ablation)
 
     model.summary()
