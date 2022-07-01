@@ -26,7 +26,7 @@ exportPath = "/storage/mstrobl/versioning"
 
 TOPIC = "PrepGenTrain"
 
-batchSize = 28
+batchSize = 24
 kernelSize = 2
 epochs = 40
 portion = 211
@@ -69,7 +69,7 @@ if __name__ == '__main__':
     print(f"\n\n\n-----------------------\n\n\n")
     print(f"Generating Waveforms @{time.time()}")
     print(f"\n\n\n-----------------------\n\n\n")
-    from generateFeatures import gen_callback, gen_wave_features, gen_features, gen_quantum, reportSettings, samplingRate
+    from generateFeatures import init_callback, gen_callback, gen_wave_features, gen_features, gen_quantum, reportSettings, samplingRate
     from qcnn.small_qsr import labels
     
     if int(args.waveform)==-1:
@@ -121,7 +121,7 @@ if __name__ == '__main__':
     if args.train:
         #if quanv completely disabled and no pix channel map
         if int(args.quantum)==-3:
-            model, history = fit_model(q_train, y_train, q_valid, y_valid, checkpointsPath, gen_callback=gen_callback, epochs=epochs, batchSize=batchSize, ablation=True)
+            model, history = fit_model(q_train, y_train, q_valid, y_valid, checkpointsPath, init_callback=init_callback, gen_callback=gen_callback, epochs=epochs, batchSize=batchSize, ablation=True)
 
         elif int(args.quantum)==-2 or q_train.shape[3]==1:
             print("using ablation")
