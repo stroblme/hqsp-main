@@ -51,6 +51,20 @@ nMels=60
 fmin=40.0
 enableQuanv=True
 
+def init_callback():
+    _, backendInstance = loadBackend(backendName=backend, simulation=simulation)
+    _, noiseModel = loadNoiseModel(backendName=backendInstance)
+
+    if noiseMitigationOpt != 0:
+        filterResultCounts = setupMeasurementFitter(backendInstance, noiseModel,
+                                                    transpOptLvl=transpOptLvl, nQubits=nQubits,
+                                                    nShots=numOfShots, nRuns=numOfRuns,
+                                                    suppressPrint=suppressPrint)
+    else:
+        filterResultCounts = None
+
+    return backendInstance, noiseModel, filterResultCounts
+    
 def gen_callback(weights, biases, x, backendInstance=backend, noiseModel=None, filterResultCounts=None, show=False, minRotation=minRotation,signalThreshold=signalThreshold,noiseMitigationOpt=noiseMitigationOpt):
     # QFT init
     stqft = transform(stqft_framework, 
