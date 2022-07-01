@@ -24,8 +24,10 @@ modelsPath = "/ceph/mstrobl/models"
 quantumPath = "/ceph/mstrobl/data_quantum"
 checkpointsPath = "/ceph/mstrobl/checkpoints"
 
+model = None
 
-def fit_model(q_train, y_train, q_valid, y_valid, cpPath, epochs, batchSize, gen_callback=None, ablation=False):
+def fit_model(q_train, y_train, q_valid, y_valid, cpPath, epochs, batchSize, init_callback=None, gen_callback=None, ablation=False):
+    global model
     ## For Quanv Exp.
     early_stop = EarlyStopping(monitor='val_loss', mode='min', 
                             verbose=1, patience=10, min_delta=0.0001)
@@ -35,12 +37,19 @@ def fit_model(q_train, y_train, q_valid, y_valid, cpPath, epochs, batchSize, gen
     checkpoint = ModelCheckpoint(cpPath, monitor=metric, 
                                 verbose=1, save_best_only=True, mode='max')
 
+    os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
+    
+    # tf.debugging.set_log_device_placement(True)
+    # gpus = tf.config.list_logical_devices('GPU')
+    # strategy = tf.distribute.MirroredStrategy(gpus)
+    # with strategy.scope():
+
     # run model with one sample to check if everything is good
     model = vqft_attrnn_model(q_train[0], labels, nQubits=nQubits, qinit_callback=init_callback, qgen_callback=gen_callback, ablation=ablation)
     # model = attrnn_Model(q_train[0], labels, ablation=ablation)
 
     model.summary()
-
+    
     history = model.fit(
         x=q_train, 
         y=y_train,
